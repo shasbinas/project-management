@@ -12,6 +12,7 @@ import searchRoutes from "./routes/searchRoutes";
 import userRoutes from "./routes/userRoutes";
 import teamRoutes from "./routes/teamRoutes";
 import authRoutes from "./routes/authRoutes";
+import uploadRoutes from "./routes/uploadRoutes";
 import { verifyToken } from "./middleware/authMiddleware";
 
 /* CONFIGURATIONS */
@@ -39,6 +40,7 @@ app.use("/tasks", verifyToken, taskRoutes);
 app.use("/search", verifyToken, searchRoutes);
 app.use("/users", verifyToken, userRoutes);
 app.use("/teams", verifyToken, teamRoutes);
+app.use("/upload", verifyToken, uploadRoutes);
 
 /* SERVER */
 const port = Number(process.env.PORT) || 3000;

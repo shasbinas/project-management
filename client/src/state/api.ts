@@ -155,6 +155,17 @@ export const api = createApi({
       query: () => "users",
       providesTags: ["Users"],
     }),
+    updateUser: build.mutation<
+      { message: string; updatedUser: User },
+      { userId: number; userData: Partial<User> }
+    >({
+      query: ({ userId, userData }) => ({
+        url: `users/${userId}`,
+        method: "PATCH",
+        body: userData,
+      }),
+      invalidatesTags: ["Users"],
+    }),
     getTeams: build.query<Team[], void>({
       query: () => "teams",
       providesTags: ["Teams"],
@@ -165,6 +176,14 @@ export const api = createApi({
     }),
     search: build.query<SearchResults, string>({
       query: (query) => `search?query=${query}`,
+    }),
+    uploadImage: build.mutation<{ imageUrl: string }, FormData>({
+      query: (formData) => ({
+        url: "upload",
+        method: "POST",
+        body: formData,
+        formData: true,
+      }),
     }),
   }),
 });
@@ -177,10 +196,12 @@ export const {
   useUpdateTaskStatusMutation,
   useSearchQuery,
   useGetUsersQuery,
+  useUpdateUserMutation,
   useGetTeamsQuery,
   useGetTasksByUserQuery,
   useLoginMutation,
   useRegisterMutation,
   useLogoutMutation,
   useGetAuthUserQuery,
+  useUploadImageMutation,
 } = api;

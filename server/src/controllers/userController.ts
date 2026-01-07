@@ -60,3 +60,24 @@ export const postUser = async (req: Request, res: Response) => {
       .json({ message: `Error creating user: ${error.message}` });
   }
 };
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
+  const { username, email, profilePictureUrl, teamId } = req.body;
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        userId: Number(userId),
+      },
+      data: {
+        username,
+        email,
+        profilePictureUrl,
+        teamId: teamId ? Number(teamId) : undefined,
+      },
+    });
+    res.json({ message: "User updated successfully", updatedUser });
+  } catch (error: any) {
+    res.status(500).json({ message: `Error updating user: ${error.message}` });
+  }
+};
