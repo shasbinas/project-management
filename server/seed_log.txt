@@ -1,0 +1,125 @@
+
+> server@1.0.0 seed
+> ts-node prisma/seed.ts
+
+Cleared data from TaskAssignment
+Cleared data from Comment
+Cleared data from Attachment
+Cleared data from Task
+Cleared data from User
+Cleared data from ProjectTeam
+Cleared data from Project
+Cleared data from Team
+Seeded team with data from team.json
+Seeded project with data from project.json
+Error seeding data for projectTeam: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `ProjectTeam_teamId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: {
+    modelName: 'ProjectTeam',
+    field_name: 'ProjectTeam_teamId_fkey (index)'
+  }
+}
+Error seeding data for user: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `User_teamId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: { modelName: 'User', field_name: 'User_teamId_fkey (index)' }
+}
+Error seeding data for task: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `Task_authorUserId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: { modelName: 'Task', field_name: 'Task_authorUserId_fkey (index)' }
+}
+Error seeding data for attachment: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `Attachment_taskId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: {
+    modelName: 'Attachment',
+    field_name: 'Attachment_taskId_fkey (index)'
+  }
+}
+Error seeding data for comment: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `Comment_taskId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: { modelName: 'Comment', field_name: 'Comment_taskId_fkey (index)' }
+}
+Error seeding data for taskAssignment: PrismaClientKnownRequestError: 
+Invalid `model.create()` invocation in
+E:\MERN-FullStack\01_Projects\project-management\server\prisma\seed.ts:51:21
+
+  48 if (modelName === "user" && data.password) {
+  49   data.password = await bcrypt.hash(data.password, 10);
+  50 }
+ΓåÆ 51 await model.create(
+Foreign key constraint failed on the field: `TaskAssignment_userId_fkey (index)`
+    at _n.handleRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7749)
+    at _n.handleAndLogRequestError (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:7057)
+    at _n.request (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:121:6741)
+    at async l (E:\MERN-FullStack\01_Projects\project-management\server\node_modules\@prisma\client\runtime\library.js:130:9355) {
+  code: 'P2003',
+  clientVersion: '5.18.0',
+  meta: {
+    modelName: 'TaskAssignment',
+    field_name: 'TaskAssignment_userId_fkey (index)'
+  }
+}
