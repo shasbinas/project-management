@@ -23,6 +23,13 @@ const CustomToolbar = () => (
 const columns: GridColDef[] = [
   { field: "userId", headerName: "ID", width: 100 },
   { field: "username", headerName: "Username", width: 150 },
+  { field: "email", headerName: "Email", width: 200 },
+  { 
+    field: "team", 
+    headerName: "Team", 
+    width: 150,
+    renderCell: (params) => params.value?.teamName || "No Team"
+  },
   {
     field: "profilePictureUrl",
     headerName: "Profile Picture",
@@ -66,6 +73,13 @@ const Users = () => {
           }}
           className={dataGridClassNames}
           sx={dataGridSxStyles(isDarkMode)}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 25,
+              },
+            },
+          }}
         />
       </div>
     </div>

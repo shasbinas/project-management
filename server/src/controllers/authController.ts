@@ -50,14 +50,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
+    const { password: _, ...userWithoutPassword } = user;
+
     res.json({
       message: "Login successful",
-      user: {
-        userId: user.userId,
-        username: user.username,
-        profilePictureUrl: user.profilePictureUrl,
-        teamId: user.teamId,
-      },
+      user: userWithoutPassword,
       token
     });
   } catch (error: any) {

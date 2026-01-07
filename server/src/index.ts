@@ -40,7 +40,7 @@ app.use("/tasks", verifyToken, taskRoutes);
 app.use("/search", verifyToken, searchRoutes);
 app.use("/users", verifyToken, userRoutes);
 app.use("/teams", verifyToken, teamRoutes);
-app.use("/upload", verifyToken, uploadRoutes);
+app.use("/upload", uploadRoutes);
 
 /* SERVER */
 const port = Number(process.env.PORT) || 3000;

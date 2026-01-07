@@ -6,7 +6,11 @@ const prisma = new PrismaClient();
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      include: {
+        team: true,
+      },
+    });
     res.json(users);
   } catch (error: any) {
     res
