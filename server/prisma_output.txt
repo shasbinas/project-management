@@ -1,0 +1,6 @@
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Error: 
+EPERM: operation not permitted, unlink 'E:\MERN-FullStack\01_Projects\project-management\server\node_modules\.prisma\client\query_engine-windows.dll.node'
+
+
