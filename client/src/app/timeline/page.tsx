@@ -20,15 +20,17 @@ const Timeline = () => {
 
   const ganttTasks = useMemo(() => {
     return (
-      projects?.map((project) => ({
-        start: new Date(project.startDate as string),
-        end: new Date(project.endDate as string),
-        name: project.name,
-        id: `Project-${project.id}`,
-        type: "project" as TaskTypeItems,
-        progress: 50,
-        isDisabled: false,
-      })) || []
+      projects
+        ?.filter((project) => project.startDate && project.endDate)
+        .map((project) => ({
+          start: new Date(project.startDate as string),
+          end: new Date(project.endDate as string),
+          name: project.name,
+          id: `Project-${project.id}`,
+          type: "project" as TaskTypeItems,
+          progress: 50,
+          isDisabled: false,
+        })) || []
     );
   }, [projects]);
 
@@ -64,15 +66,21 @@ const Timeline = () => {
 
       <div className="overflow-hidden rounded-md bg-white shadow dark:bg-dark-secondary dark:text-white">
         <div className="timeline">
-          <Gantt
-            tasks={ganttTasks}
-            {...displayOptions}
-            columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
-            listCellWidth="100px"
-            projectBackgroundColor={isDarkMode ? "#101214" : "#1f2937"}
-            projectProgressColor={isDarkMode ? "#1f2937" : "#aeb8c2"}
-            projectProgressSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
-          />
+          {ganttTasks.length > 0 ? (
+            <Gantt
+              tasks={ganttTasks}
+              {...displayOptions}
+              columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
+              listCellWidth="100px"
+              projectBackgroundColor={isDarkMode ? "#101214" : "#1f2937"}
+              projectProgressColor={isDarkMode ? "#1f2937" : "#aeb8c2"}
+              projectProgressSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
+            />
+          ) : (
+            <div className="p-5 text-center text-gray-500">
+              No projects with valid dates to display on the timeline.
+            </div>
+          )}
         </div>
       </div>
     </div>

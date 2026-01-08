@@ -26,15 +26,17 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
 
   const ganttTasks = useMemo(() => {
     return (
-      tasks?.map((task) => ({
-        start: new Date(task.startDate as string),
-        end: new Date(task.dueDate as string),
-        name: task.title,
-        id: `Task-${task.id}`,
-        type: "task" as TaskTypeItems,
-        progress: task.points ? (task.points / 10) * 100 : 0,
-        isDisabled: false,
-      })) || []
+      tasks
+        ?.filter((task) => task.startDate && task.dueDate)
+        .map((task) => ({
+          start: new Date(task.startDate as string),
+          end: new Date(task.dueDate as string),
+          name: task.title,
+          id: `Task-${task.id}`,
+          type: "task" as TaskTypeItems,
+          progress: task.points ? (task.points / 10) * 100 : 0,
+          isDisabled: false,
+        })) || []
     );
   }, [tasks]);
 
@@ -48,7 +50,8 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (error || !tasks) return <div>An error occurred while fetching tasks</div>;
+  if (error) return <div>An error occurred while fetching tasks</div>;
+  if (!tasks || tasks.length === 0) return <div className="p-8">No tasks found. Please create a task for this project to view the timeline.</div>;
 
   return (
     <div className="px-4 xl:px-6">
@@ -71,14 +74,20 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
 
       <div className="overflow-hidden rounded-md bg-white shadow dark:bg-dark-secondary dark:text-white">
         <div className="timeline">
-          <Gantt
-            tasks={ganttTasks}
-            {...displayOptions}
-            columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
-            listCellWidth="100px"
-            barBackgroundColor={isDarkMode ? "#101214" : "#aeb8c2"}
-            barBackgroundSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
-          />
+          {ganttTasks.length > 0 ? (
+            <Gantt
+              tasks={ganttTasks}
+              {...displayOptions}
+              columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
+              listCellWidth="100px"
+              barBackgroundColor={isDarkMode ? "#101214" : "#aeb8c2"}
+              barBackgroundSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
+            />
+          ) : (
+            <div className="p-5 text-center text-gray-500">
+              No tasks with valid dates to display on the timeline.
+            </div>
+          )}
         </div>
         <div className="px-4 pb-5 pt-1">
           <button
