@@ -42,8 +42,8 @@ const Timeline = () => {
   };
 
   if (isLoading) return <div>Loading...</div>;
-  if (isError || !projects)
-    return <div>An error occurred while fetching projects</div>;
+  if (isError) return <div>An error occurred while fetching projects</div>;
+  if (!projects || projects.length === 0) return <div className="p-8">No projects found. Please create a project to view the timeline.</div>;
 
   return (
     <div className="max-w-full p-8">

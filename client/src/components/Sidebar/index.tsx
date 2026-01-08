@@ -14,6 +14,7 @@ import {
   Layers3,
   LockIcon,
   LucideIcon,
+  PlusSquare,
   Search,
   Settings,
   ShieldAlert,
@@ -25,10 +26,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
+import ModalNewProject from "@/app/projects/ModalNewProject";
 
 const Sidebar = () => {
   const [showProjects, setShowProjects] = useState(true);
   const [showPriority, setShowPriority] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: projects } = useGetProjectsQuery();
   const dispatch = useAppDispatch();
@@ -106,16 +109,26 @@ const Sidebar = () => {
             <ChevronDown className="h-5 w-5" />
           )}
         </button>
-        {/* PROJECTS LIST */}
-        {showProjects &&
-          projects?.map((project) => (
-            <SidebarLink
-              key={project.id}
-              icon={Briefcase}
-              label={project.name}
-              href={`/projects/${project.id}`}
-            />
-          ))}
+        {/* LIST OF PROJECTS */}
+        <div className="flex flex-col">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-3 px-8 py-3 text-sm font-medium text-blue-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+          >
+            <PlusSquare className="h-4 w-4" />
+            <span>Create New Project</span>
+          </button>
+          
+          {showProjects &&
+            projects?.map((project) => (
+              <SidebarLink
+                key={project.id}
+                icon={Briefcase}
+                label={project.name}
+                href={`/projects/${project.id}`}
+              />
+            ))}
+        </div>
 
         {/* PRIORITIES LINKS */}
         <button
@@ -187,6 +200,10 @@ const Sidebar = () => {
             Sign out
           </button>
       </div>
+      <ModalNewProject
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
