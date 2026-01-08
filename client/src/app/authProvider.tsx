@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useLoginMutation, useRegisterMutation, useUploadImageMutation } from "@/state/api";
+import { useLoginMutation, useRegisterMutation } from "@/state/api";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setAuth } from "@/state";
 
@@ -9,14 +9,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
   const [login, { isLoading: isLoginLoading }] = useLoginMutation();
   const [register, { isLoading: isRegisterLoading }] = useRegisterMutation();
-  const [uploadImage, { isLoading: isUploadLoading }] = useUploadImageMutation();
   const user = useAppSelector((state) => state.global.user);
   
   const [isLoginView, setIsLoginView] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -32,15 +30,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      let profilePictureUrl = "";
-      if (profilePicture) {
-        const formData = new FormData();
-        formData.append("file", profilePicture);
-        const uploadResult = await uploadImage(formData).unwrap();
-        profilePictureUrl = uploadResult.imageUrl;
-      }
-      
-      await register({ username, email, password, profilePictureUrl }).unwrap();
+      await register({ username, email, password }).unwrap();
       setIsLoginView(true);
       setError("Registration successful! Please login.");
     } catch (err: any) {
@@ -102,23 +92,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {!isLoginView && (
-              <div className="p-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-b-md">
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">Profile Picture (Optional)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  onChange={(e) => setProfilePicture(e.target.files?.[0] || null)}
-                />
-              </div>
-            )}
-          </div>
+            </div>
 
           <div>
             <button
               type="submit"
-              disabled={isLoginLoading || isRegisterLoading || isUploadLoading}
+              disabled={isLoginLoading || isRegisterLoading}
               className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400"
             >
               {isLoginView ? "Sign in" : "Register"}
