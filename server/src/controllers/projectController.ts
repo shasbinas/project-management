@@ -27,8 +27,8 @@ export const createProject = async (
       data: {
         name,
         description,
-        startDate,
-        endDate,
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
       },
     });
     res.status(201).json(newProject);

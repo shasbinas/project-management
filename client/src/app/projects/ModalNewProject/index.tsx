@@ -18,19 +18,29 @@ const ModalNewProject = ({ isOpen, onClose }: Props) => {
   const handleSubmit = async () => {
     if (!projectName || !startDate || !endDate) return;
 
-    const formattedStartDate = formatISO(new Date(startDate), {
-      representation: "complete",
-    });
-    const formattedEndDate = formatISO(new Date(endDate), {
-      representation: "complete",
-    });
+    try {
+      const formattedStartDate = formatISO(new Date(startDate), {
+        representation: "complete",
+      });
+      const formattedEndDate = formatISO(new Date(endDate), {
+        representation: "complete",
+      });
 
-    await createProject({
-      name: projectName,
-      description,
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-    });
+      await createProject({
+        name: projectName,
+        description,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      }).unwrap();
+      
+      setProjectName("");
+      setDescription("");
+      setStartDate("");
+      setEndDate("");
+      onClose();
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
   };
 
   const isFormValid = () => {

@@ -72,16 +72,22 @@ const Navbar = () => {
           <div className="align-center flex h-9 w-9 justify-center">
             {!!currentUser?.profilePictureUrl ? (
               <Image
-                src={currentUser?.profilePictureUrl && currentUser.profilePictureUrl.startsWith("http") 
+                src={currentUser.profilePictureUrl.startsWith("http") 
                   ? currentUser.profilePictureUrl 
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser?.profilePictureUrl}`}
+                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl}`}
                 alt={currentUser?.username || "User Profile Picture"}
                 width={100}
                 height={50}
                 className="h-full rounded-full object-cover"
               />
             ) : (
-              <User className="h-6 w-6 cursor-pointer self-center rounded-full dark:text-white" />
+              <Image
+                src="/i1.jpg"
+                alt="Default Profile"
+                width={100}
+                height={50}
+                className="h-full rounded-full object-cover"
+              />
             )}
           </div>
           <span className="mx-3 text-gray-800 dark:text-white">

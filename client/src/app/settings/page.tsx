@@ -3,7 +3,7 @@
 import Header from "@/components/Header";
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux";
-import { useUpdateUserMutation, useUploadImageMutation } from "@/state/api";
+import { useUpdateUserMutation, useUploadImageMutation, useGetTeamsQuery } from "@/state/api";
 import { setAuth } from "@/state";
 import Image from "next/image";
 
@@ -14,9 +14,11 @@ const Settings = () => {
   
   const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [uploadImage, { isLoading: isUploading }] = useUploadImageMutation();
+  const { data: teams, isLoading: isTeamsLoading } = useGetTeamsQuery();
 
   const [username, setUsername] = useState(currentUser?.username || "");
   const [email, setEmail] = useState(currentUser?.email || "");
+  const [teamId, setTeamId] = useState(currentUser?.teamId?.toString() || "");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -36,7 +38,12 @@ const Settings = () => {
 
       const result = await updateUser({
         userId: currentUser.userId!,
-        userData: { username, email, profilePictureUrl },
+        userData: { 
+          username, 
+          email, 
+          profilePictureUrl,
+          teamId: teamId ? Number(teamId) : undefined 
+        },
       }).unwrap();
 
       dispatch(setAuth({ user: result.updatedUser, token: token! }));
@@ -62,11 +69,14 @@ const Settings = () => {
         <div className="flex flex-col items-center mb-6">
           <div className="relative h-24 w-24 mb-4">
              <Image
-              src={currentUser.profilePictureUrl && currentUser.profilePictureUrl.startsWith("http")
-                ? currentUser.profilePictureUrl
-                : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl || "i1.jpg"}`}
+              src={currentUser.profilePictureUrl 
+                ? (currentUser.profilePictureUrl.startsWith("http")
+                  ? currentUser.profilePictureUrl
+                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl}`)
+                : "/i1.jpg"}
               alt="Profile"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="rounded-full object-cover border-2 border-blue-500"
             />
           </div>
@@ -95,6 +105,23 @@ const Settings = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+        </div>
+
+        <div>
+          <label className={labelStyles}>Team</label>
+          <select
+            className={inputStyles}
+            value={teamId}
+            onChange={(e) => setTeamId(e.target.value)}
+            disabled={isTeamsLoading}
+          >
+            <option value="">Select a Team</option>
+            {teams?.map((team) => (
+              <option key={team.id} value={team.id}>
+                {team.teamName}
+              </option>
+            ))}
+          </select>
         </div>
         
         <button
