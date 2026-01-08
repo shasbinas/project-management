@@ -67,7 +67,7 @@ export interface SearchResults {
 }
 
 export interface Team {
-  teamId: number;
+  id: number;
   teamName: string;
   productOwnerUserId?: number;
   projectManagerUserId?: number;
@@ -170,6 +170,14 @@ export const api = createApi({
       query: () => "teams",
       providesTags: ["Teams"],
     }),
+    createTeam: build.mutation<Team, Partial<Team>>({
+      query: (team) => ({
+        url: "teams",
+        method: "POST",
+        body: team,
+      }),
+      invalidatesTags: ["Teams"],
+    }),
     getAuthUser: build.query<User, void>({
       query: () => "auth/me",
       providesTags: ["Users"],
@@ -198,6 +206,7 @@ export const {
   useGetUsersQuery,
   useUpdateUserMutation,
   useGetTeamsQuery,
+  useCreateTeamMutation,
   useGetTasksByUserQuery,
   useLoginMutation,
   useRegisterMutation,
