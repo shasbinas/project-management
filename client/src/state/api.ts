@@ -30,6 +30,7 @@ export interface User {
   email?: string;
   profilePictureUrl?: string;
   teamId?: number;
+  team?: Team;
 }
 
 export interface Attachment {

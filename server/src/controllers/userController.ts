@@ -79,6 +79,9 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         profilePictureUrl,
         teamId: teamId ? Number(teamId) : undefined,
       },
+      include: {
+        team: true,
+      },
     });
     res.json({ message: "User updated successfully", updatedUser });
   } catch (error: any) {

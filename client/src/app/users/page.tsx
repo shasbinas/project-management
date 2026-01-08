@@ -24,11 +24,11 @@ const columns: GridColDef[] = [
   { field: "userId", headerName: "ID", width: 100 },
   { field: "username", headerName: "Username", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
-  { 
-    field: "team", 
-    headerName: "Team", 
+  {
+    field: "team",
+    headerName: "Team",
     width: 150,
-    renderCell: (params) => params.value?.teamName || "No Team"
+    valueGetter: (value, row) => row.team?.teamName || "No Team",
   },
   {
     field: "profilePictureUrl",
@@ -40,7 +40,9 @@ const columns: GridColDef[] = [
           <Image
             src={params.value && params.value.startsWith("http")
               ? params.value
-              : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`}
+              : params.value 
+                ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`
+                : "/i1.jpg"}
             alt={params.row.username}
             width={100}
             height={50}

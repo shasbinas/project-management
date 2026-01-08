@@ -1,7 +1,8 @@
 import Modal from "@/components/Modal";
-import { Priority, Status, useCreateTaskMutation } from "@/state/api";
+import { Priority, Status, useCreateTaskMutation, useGetUsersQuery } from "@/state/api";
 import React, { useState } from "react";
 import { formatISO } from "date-fns";
+import { useAppSelector } from "@/app/redux";
 
 type Props = {
   isOpen: boolean;
@@ -11,6 +12,9 @@ type Props = {
 
 const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
   const [createTask, { isLoading }] = useCreateTaskMutation();
+  const { data: users } = useGetUsersQuery();
+  const currentUser = useAppSelector((state) => state.global.user);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<Status>(Status.ToDo);
@@ -18,36 +22,52 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
   const [tags, setTags] = useState("");
   const [startDate, setStartDate] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [authorUserId, setAuthorUserId] = useState("");
   const [assignedUserId, setAssignedUserId] = useState("");
   const [projectId, setProjectId] = useState("");
 
   const handleSubmit = async () => {
-    if (!title || !authorUserId || !(id !== null || projectId)) return;
+    if (!title || !currentUser?.userId || !(id !== null || projectId)) return;
 
-    const formattedStartDate = formatISO(new Date(startDate), {
+    const formattedStartDate = startDate ? formatISO(new Date(startDate), {
       representation: "complete",
-    });
-    const formattedDueDate = formatISO(new Date(dueDate), {
+    }) : undefined;
+    
+    const formattedDueDate = dueDate ? formatISO(new Date(dueDate), {
       representation: "complete",
-    });
+    }) : undefined;
 
-    await createTask({
-      title,
-      description,
-      status,
-      priority,
-      tags,
-      startDate: formattedStartDate,
-      dueDate: formattedDueDate,
-      authorUserId: parseInt(authorUserId),
-      assignedUserId: parseInt(assignedUserId),
-      projectId: id !== null ? Number(id) : Number(projectId),
-    });
+    try {
+      await createTask({
+        title,
+        description,
+        status,
+        priority,
+        tags,
+        startDate: formattedStartDate,
+        dueDate: formattedDueDate,
+        authorUserId: currentUser.userId,
+        assignedUserId: assignedUserId ? parseInt(assignedUserId) : undefined,
+        projectId: id !== null ? Number(id) : Number(projectId),
+      }).unwrap();
+      
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setStatus(Status.ToDo);
+      setPriority(Priority.Backlog);
+      setTags("");
+      setStartDate("");
+      setDueDate("");
+      setAssignedUserId("");
+      setProjectId("");
+      onClose();
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    }
   };
 
   const isFormValid = () => {
-    return title && authorUserId && !(id !== null || projectId);
+    return title && (id !== null || projectId);
   };
 
   const selectStyles =
@@ -68,7 +88,7 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
         <input
           type="text"
           className={inputStyles}
-          placeholder="Title"
+          placeholder="Title (Required)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -83,10 +103,9 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
             className={selectStyles}
             value={status}
             onChange={(e) =>
-              setStatus(Status[e.target.value as keyof typeof Status])
+              setStatus(e.target.value as Status)
             }
           >
-            <option value="">Select Status</option>
             <option value={Status.ToDo}>To Do</option>
             <option value={Status.WorkInProgress}>Work In Progress</option>
             <option value={Status.UnderReview}>Under Review</option>
@@ -96,10 +115,9 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
             className={selectStyles}
             value={priority}
             onChange={(e) =>
-              setPriority(Priority[e.target.value as keyof typeof Priority])
+              setPriority(e.target.value as Priority)
             }
           >
-            <option value="">Select Priority</option>
             <option value={Priority.Urgent}>Urgent</option>
             <option value={Priority.High}>High</option>
             <option value={Priority.Medium}>Medium</option>
@@ -116,38 +134,44 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
         />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-2">
-          <input
-            type="date"
-            className={inputStyles}
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <input
-            type="date"
-            className={inputStyles}
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300">Start Date</label>
+            <input
+              type="date"
+              className={inputStyles}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium dark:text-gray-300">Due Date</label>
+            <input
+              type="date"
+              className={inputStyles}
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
         </div>
-        <input
-          type="text"
-          className={inputStyles}
-          placeholder="Author User ID"
-          value={authorUserId}
-          onChange={(e) => setAuthorUserId(e.target.value)}
-        />
-        <input
-          type="text"
-          className={inputStyles}
-          placeholder="Assigned User ID"
+
+        <select
+          className={selectStyles}
           value={assignedUserId}
           onChange={(e) => setAssignedUserId(e.target.value)}
-        />
+        >
+          <option value="">Assign To (Optional)</option>
+          {users?.map((user) => (
+            <option key={user.userId} value={user.userId}>
+              {user.username}
+            </option>
+          ))}
+        </select>
+
         {id === null && (
           <input
             type="text"
             className={inputStyles}
-            placeholder="ProjectId"
+            placeholder="ProjectId (Required if not in project view)"
             value={projectId}
             onChange={(e) => setProjectId(e.target.value)}
           />
