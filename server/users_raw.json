@@ -1,0 +1,30 @@
+[
+  {
+    "userId": 72,
+    "username": "sargoravs",
+    "email": "sargoravs@gmail.com",
+    "password": "cognito-managed",
+    "profilePictureUrl": "https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/attachments/1768142092674-p4.jpeg",
+    "teamId": 11,
+    "team": {
+      "id": 11,
+      "teamName": "JK Tech",
+      "productOwnerUserId": 72,
+      "projectManagerUserId": 70
+    }
+  },
+  {
+    "userId": 70,
+    "username": "shasbin.official",
+    "email": "shasbin.official@gmail.com",
+    "password": "cognito-managed",
+    "profilePictureUrl": "https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/attachments/1768142239752-WhatsApp%20Image%202025-08-13%20at%2014.06.14_46156f63.jpg",
+    "teamId": 11,
+    "team": {
+      "id": 11,
+      "teamName": "JK Tech",
+      "productOwnerUserId": 72,
+      "projectManagerUserId": 70
+    }
+  }
+]
