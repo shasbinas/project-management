@@ -17,7 +17,7 @@ export const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: process.env.AWS_BUCKET_NAME || "",
-    acl: "public-read",
+    // acl: "public-read", // Commented out to avoid 500 errors on buckets with public access blocked
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },

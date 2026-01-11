@@ -13,6 +13,7 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
       imageUrl: (req.file as any).location,
     });
   } catch (error: any) {
-    res.status(500).json({ message: `Error uploading image: ${error.message}` });
+    console.error("S3 Upload Error:", error);
+    res.status(500).json({ message: `Error uploading image: ${error.message || "Unknown error"}` });
   }
 };
