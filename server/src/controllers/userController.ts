@@ -69,9 +69,34 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
   const { userId } = req.params;
   const { username, email, profilePictureUrl, teamId } = req.body;
   try {
+    let targetUserId = Number(userId);
+
+    // If userId is not a number (e.g. Cognito UUID), find user by email
+    if (isNaN(targetUserId)) {
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+      if (user) {
+        targetUserId = user.userId;
+      } else {
+        // Option 2: Create the user if they don't exist yet (Lazy sync)
+        const newUser = await prisma.user.create({
+          data: {
+            username,
+            email,
+            password: "cognito-managed",
+            profilePictureUrl,
+            teamId: teamId ? Number(teamId) : 1,
+          }
+        });
+        res.json({ message: "User profile created successfully", updatedUser: newUser });
+        return;
+      }
+    }
+
     const updatedUser = await prisma.user.update({
       where: {
-        userId: Number(userId),
+        userId: targetUserId,
       },
       data: {
         username,

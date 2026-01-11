@@ -3,6 +3,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { logout, setIsSidebarCollapsed } from "@/state";
 import { useGetProjectsQuery } from "@/state/api";
+import { signOut } from "aws-amplify/auth";
 import {
   AlertCircle,
   AlertOctagon,
@@ -41,7 +42,12 @@ const Sidebar = () => {
 
   const currentUser = useAppSelector((state) => state.global.user);
   const handleSignOut = async () => {
-    dispatch(logout());
+    try {
+      await signOut();
+      dispatch(logout());
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
   if (!currentUser) return null;
 
@@ -174,7 +180,7 @@ const Sidebar = () => {
               <Image
                 src={currentUser.profilePictureUrl.startsWith("http") 
                   ? currentUser.profilePictureUrl 
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl}`}
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${currentUser.profilePictureUrl}`}
                 alt={currentUser?.username || "User Profile Picture"}
                 width={100}
                 height={50}

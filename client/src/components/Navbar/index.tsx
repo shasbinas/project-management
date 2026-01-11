@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { logout, setIsDarkMode, setIsSidebarCollapsed } from "@/state";
 import Image from "next/image";
+import { signOut } from "aws-amplify/auth";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -15,7 +16,12 @@ const Navbar = () => {
   const currentUser = useAppSelector((state) => state.global.user);
 
   const handleSignOut = async () => {
-    dispatch(logout());
+    try {
+      await signOut();
+      dispatch(logout());
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   if (!currentUser) return null;
@@ -74,7 +80,7 @@ const Navbar = () => {
               <Image
                 src={currentUser.profilePictureUrl.startsWith("http") 
                   ? currentUser.profilePictureUrl 
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl}`}
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${currentUser.profilePictureUrl}`}
                 alt={currentUser?.username || "User Profile Picture"}
                 width={100}
                 height={50}
@@ -90,7 +96,7 @@ const Navbar = () => {
               />
             )}
           </div>
-          <span className="mx-3 text-gray-800 dark:text-white">
+          <span className="mx-3 text-gray-800 dark:text-white font-bold">
             {currentUser?.username}
           </span>
           <button

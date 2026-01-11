@@ -77,8 +77,20 @@ export interface Team {
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).global.token;
+    prepareHeaders: async (headers, { getState }) => {
+      let token = (getState() as any).global.token;
+
+      // If token isn't in Redux yet, try fetching it directly from Amplify
+      if (!token) {
+        try {
+          const { fetchAuthSession } = await import("aws-amplify/auth");
+          const session = await fetchAuthSession();
+          token = session.tokens?.idToken?.toString();
+        } catch (e) {
+          // No session found, proceed without token
+        }
+      }
+
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }

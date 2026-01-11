@@ -24,9 +24,9 @@ export const globalSlice = createSlice({
     setIsDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;
     },
-    setAuth: (state, action: PayloadAction<{ user: any; token: string | null }>) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
+    setAuth: (state, action: PayloadAction<{ user?: any; token?: string | null }>) => {
+      if (action.payload.user !== undefined) state.user = action.payload.user;
+      if (action.payload.token !== undefined) state.token = action.payload.token;
     },
     logout: (state) => {
       state.user = null;

@@ -7,10 +7,10 @@ export const uploadImage = async (req: Request, res: Response): Promise<void> =>
       return;
     }
 
-    // req.file.path is the Cloudinary URL when using multer-storage-cloudinary
+    // req.file.location is the S3 URL when using multer-s3
     res.json({
       message: "Image uploaded successfully",
-      imageUrl: (req.file as any).path,
+      imageUrl: (req.file as any).location,
     });
   } catch (error: any) {
     res.status(500).json({ message: `Error uploading image: ${error.message}` });

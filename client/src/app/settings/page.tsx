@@ -23,6 +23,14 @@ const Settings = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  React.useEffect(() => {
+    if (currentUser) {
+      setUsername(currentUser.username || "");
+      setEmail(currentUser.email || "");
+      setTeamId(currentUser.teamId?.toString() || "");
+    }
+  }, [currentUser]);
+
   if (!currentUser) return <div className="p-8">Please login to view settings.</div>;
 
   const handleSave = async () => {
@@ -72,7 +80,7 @@ const Settings = () => {
               src={currentUser.profilePictureUrl 
                 ? (currentUser.profilePictureUrl.startsWith("http")
                   ? currentUser.profilePictureUrl
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${currentUser.profilePictureUrl}`)
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${currentUser.profilePictureUrl}`)
                 : "/i1.jpg"}
               alt="Profile"
               fill
@@ -80,6 +88,7 @@ const Settings = () => {
               className="rounded-full object-cover border-2 border-blue-500"
             />
           </div>
+          <h2 className="text-xl font-bold dark:text-white mb-2">{currentUser.username}</h2>
           <input
             type="file"
             accept="image/*"
