@@ -15,17 +15,23 @@ export const getTeams = async (req: Request, res: Response): Promise<void> => {
         if (team.productOwnerUserId) {
           const productOwner = await prisma.user.findUnique({
             where: { userId: team.productOwnerUserId },
-            select: { username: true },
+            select: { username: true, email: true },
           });
-          productOwnerUsername = productOwner?.username;
+          if (productOwner) {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productOwner.username);
+            productOwnerUsername = isUUID ? productOwner.email.split("@")[0] : productOwner.username;
+          }
         }
 
         if (team.projectManagerUserId) {
           const projectManager = await prisma.user.findUnique({
             where: { userId: team.projectManagerUserId },
-            select: { username: true },
+            select: { username: true, email: true },
           });
-          projectManagerUsername = projectManager?.username;
+          if (projectManager) {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(projectManager.username);
+            projectManagerUsername = isUUID ? projectManager.email.split("@")[0] : projectManager.username;
+          }
         }
 
         return {
