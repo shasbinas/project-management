@@ -30,6 +30,7 @@ export interface User {
   email?: string;
   profilePictureUrl?: string;
   teamId?: number;
+  teamName?: string;
   team?: Team;
 }
 
@@ -166,7 +167,13 @@ export const api = createApi({
     }),
     getUsers: build.query<User[], void>({
       query: () => "users",
-      providesTags: ["Users"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ userId }) => ({ type: "Users" as const, id: userId })),
+              { type: "Users" as const, id: "LIST" },
+            ]
+          : [{ type: "Users" as const, id: "LIST" }],
     }),
     updateUser: build.mutation<
       { message: string; updatedUser: User },
@@ -177,7 +184,10 @@ export const api = createApi({
         method: "PATCH",
         body: userData,
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: (result, error, { userId }) => [
+        { type: "Users", id: userId },
+        { type: "Users", id: "LIST" },
+      ],
     }),
     getTeams: build.query<Team[], void>({
       query: () => "teams",

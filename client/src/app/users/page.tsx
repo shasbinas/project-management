@@ -25,10 +25,14 @@ const columns: GridColDef[] = [
   { field: "username", headerName: "Username", width: 150 },
   { field: "email", headerName: "Email", width: 200 },
   {
-    field: "team",
+    field: "teamName",
     headerName: "Team",
     width: 150,
-    valueGetter: (value, row) => row.team?.teamName || "No Team",
+    renderCell: (params) => (
+      <div className="flex h-full items-center">
+        {params.value || "No Team"}
+      </div>
+    ),
   },
   {
     field: "profilePictureUrl",

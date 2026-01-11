@@ -16,7 +16,8 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.username);
       return {
         ...user,
-        username: isUUID ? (user.email.split("@")[0]) : user.username
+        username: isUUID ? (user.email.split("@")[0]) : user.username,
+        teamName: user.team?.teamName || "No Team"
       };
     });
 
@@ -117,7 +118,11 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
         team: true,
       },
     });
-    res.json({ message: "User updated successfully", updatedUser });
+    const formattedUser = {
+      ...updatedUser,
+      teamName: updatedUser.team?.teamName || "No Team"
+    };
+    res.json({ message: "User updated successfully", updatedUser: formattedUser });
   } catch (error: any) {
     res.status(500).json({ message: `Error updating user: ${error.message}` });
   }
