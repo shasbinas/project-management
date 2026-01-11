@@ -12,6 +12,18 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   );
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
 
+  // Suppress Recharts defaultProps warning
+  useEffect(() => {
+    const originalError = console.error;
+    console.error = (...args: any[]) => {
+      if (typeof args[0] === "string" && args[0].includes("defaultProps")) return;
+      originalError(...args);
+    };
+    return () => {
+      console.error = originalError;
+    };
+  }, []);
+
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
