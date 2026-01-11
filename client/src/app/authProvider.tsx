@@ -66,7 +66,6 @@ const AuthSync = ({ user }: { user: any }) => {
           
           dispatch(
             setAuth({
-              user: null, // User details will be synced from the database call next
               token: token,
             })
           );
@@ -83,10 +82,17 @@ const AuthSync = ({ user }: { user: any }) => {
 
   React.useEffect(() => {
     if (isDbUserLoaded && dbUser) {
+      // Final display check: Ensure we don't show a UUID as the username
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(dbUser.username);
+      
+      const displayUser = {
+        ...dbUser,
+        username: isUUID ? (dbUser.email?.split("@")[0] || dbUser.username) : dbUser.username
+      };
+
       dispatch(
         setAuth({
-          user: dbUser,
-          token: undefined, // Keep the existing token
+          user: displayUser,
         })
       );
     }

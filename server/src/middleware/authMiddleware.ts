@@ -20,26 +20,35 @@ export const verifyToken = async (req: any, res: Response, next: NextFunction) =
   try {
     const payload = await verifier.verify(token) as any;
     
-    // 1. Check if user exists in your local database
+    // 1. Find or create user in local database
     let localUser = await prisma.user.findUnique({
       where: { email: payload.email },
     });
 
-    // 2. If they don't exist yet (first time login), create them!
+    const friendlyName = payload["cognito:username"] || payload.username || payload.email.split("@")[0];
+
     if (!localUser) {
       localUser = await prisma.user.create({
         data: {
-          username: payload["cognito:username"] || payload.username || payload.email.split("@")[0],
+          username: friendlyName,
           email: payload.email,
-          password: "cognito-managed", // We use Cognito for password management
-          // Removed hardcoded teamId to avoid FK errors
+          password: "cognito-managed",
         },
       });
+    } else {
+      // If the existing username is a UUID, update it to something readable
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(localUser.username);
+      if (isUUID) {
+        localUser = await prisma.user.update({
+          where: { userId: localUser.userId },
+          data: { username: friendlyName }
+        });
+      }
     }
 
     req.user = {
-      userId: localUser.userId, // Use the real database Integer ID
-      username: localUser.username,
+      userId: localUser.userId, // Numerical ID
+      username: localUser.username, // Readable name
       email: localUser.email,
     };
     next();
