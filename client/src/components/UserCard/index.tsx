@@ -13,7 +13,7 @@ const UserCard = ({ user }: Props) => {
         <Image
           src={user.profilePictureUrl && user.profilePictureUrl.startsWith("http") 
             ? user.profilePictureUrl 
-            : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${user.profilePictureUrl}`}
+            : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${user.profilePictureUrl}`}
           alt="profile picture"
           width={32}
           height={32}

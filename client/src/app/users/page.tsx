@@ -41,7 +41,7 @@ const columns: GridColDef[] = [
             src={params.value && params.value.startsWith("http")
               ? params.value
               : params.value 
-                ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${params.value}`
+                ? `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${params.value}`
                 : "/i1.jpg"}
             alt={params.row.username}
             width={100}

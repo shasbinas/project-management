@@ -18,7 +18,7 @@ const TaskCard = ({ task }: Props) => {
               <Image
                 src={task.attachments[0].fileURL && task.attachments[0].fileURL.startsWith("http")
                   ? task.attachments[0].fileURL
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${task.attachments[0].fileURL}`}
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.attachments[0].fileURL}`}
                 alt={task.attachments[0].fileName}
                 width={400}
                 height={200}

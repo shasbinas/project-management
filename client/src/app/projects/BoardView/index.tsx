@@ -176,7 +176,7 @@ const Task = ({ task }: TaskProps) => {
         <Image
           src={task.attachments[0].fileURL.startsWith("http")
             ? task.attachments[0].fileURL
-            : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${task.attachments[0].fileURL}`}
+            : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.attachments[0].fileURL}`}
           alt={task.attachments[0].fileName}
           width={400}
           height={200}
@@ -230,7 +230,7 @@ const Task = ({ task }: TaskProps) => {
                 key={task.assignee.userId}
                 src={task.assignee.profilePictureUrl && task.assignee.profilePictureUrl.startsWith("http")
                   ? task.assignee.profilePictureUrl
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${task.assignee.profilePictureUrl}`}
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.assignee.profilePictureUrl}`}
                 alt={task.assignee.username}
                 width={30}
                 height={30}
@@ -242,7 +242,7 @@ const Task = ({ task }: TaskProps) => {
                 key={task.author.userId}
                 src={task.author.profilePictureUrl && task.author.profilePictureUrl.startsWith("http")
                   ? task.author.profilePictureUrl
-                  : `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${task.author.profilePictureUrl}`}
+                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.author.profilePictureUrl}`}
                 alt={task.author.username}
                 width={30}
                 height={30}
