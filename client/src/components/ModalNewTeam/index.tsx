@@ -59,11 +59,15 @@ const ModalNewTeam = ({ isOpen, onClose }: Props) => {
           onChange={(e) => setProductOwnerUserId(e.target.value)}
         >
           <option value="">Select Product Owner (Optional)</option>
-          {users?.map((user) => (
-            <option key={user.userId} value={user.userId}>
-              {user.username}
-            </option>
-          ))}
+          {users?.map((user) => {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.username);
+            const displayName = isUUID ? (user.email?.split("@")[0] || user.username) : user.username;
+            return (
+              <option key={user.userId} value={user.userId}>
+                {displayName}
+              </option>
+            );
+          })}
         </select>
 
         <select
@@ -72,11 +76,15 @@ const ModalNewTeam = ({ isOpen, onClose }: Props) => {
           onChange={(e) => setProjectManagerUserId(e.target.value)}
         >
           <option value="">Select Project Manager (Optional)</option>
-          {users?.map((user) => (
-            <option key={user.userId} value={user.userId}>
-              {user.username}
-            </option>
-          ))}
+          {users?.map((user) => {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.username);
+            const displayName = isUUID ? (user.email?.split("@")[0] || user.username) : user.username;
+            return (
+              <option key={user.userId} value={user.userId}>
+                {displayName}
+              </option>
+            );
+          })}
         </select>
 
         <button

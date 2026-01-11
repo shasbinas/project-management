@@ -11,7 +11,16 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
         team: true,
       },
     });
-    res.json(users);
+
+    const formattedUsers = users.map(user => {
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.username);
+      return {
+        ...user,
+        username: isUUID ? (user.email.split("@")[0]) : user.username
+      };
+    });
+
+    res.json(formattedUsers);
   } catch (error: any) {
     res
       .status(500)
