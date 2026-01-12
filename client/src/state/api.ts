@@ -79,21 +79,18 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     prepareHeaders: async (headers, { getState }) => {
-      let token = (getState() as any).global.token;
+      try {
+        // Always fetch the latest session from Amplify to ensure token is valid and refreshed if needed
+        const { fetchAuthSession } = await import("aws-amplify/auth");
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString();
 
-      // If token isn't in Redux yet, try fetching it directly from Amplify
-      if (!token) {
-        try {
-          const { fetchAuthSession } = await import("aws-amplify/auth");
-          const session = await fetchAuthSession();
-          token = session.tokens?.idToken?.toString();
-        } catch (e) {
-          // No session found, proceed without token
+        if (token) {
+          headers.set("Authorization", `Bearer ${token}`);
         }
-      }
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
+      } catch (error) {
+        // If there's no session or an error, we don't set the header
+        // The endpoint will return 401 if authorized is required
       }
       return headers;
     },
