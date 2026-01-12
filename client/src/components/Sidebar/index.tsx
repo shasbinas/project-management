@@ -51,8 +51,8 @@ const Sidebar = () => {
   };
   if (!currentUser) return null;
 
-  const sidebarClassNames = `fixed flex flex-col h-[100%] justify-between shadow-xl
-    transition-all duration-300 h-full z-40 dark:bg-black overflow-y-auto bg-white
+  const sidebarClassNames = `fixed top-0 left-0 flex flex-col h-[100%] justify-between shadow-xl
+    transition-all duration-300 h-full z-40 dark:bg-dark-bg bg-white
     ${isSidebarCollapsed ? "w-0 hidden" : "w-64"}
   `;
 
@@ -60,7 +60,7 @@ const Sidebar = () => {
     <div className={sidebarClassNames}>
       <div className="flex h-[100%] w-full flex-col justify-start">
         {/* TOP LOGO */}
-        <div className="z-50 flex min-h-[56px] w-64 items-center justify-between bg-white px-6 pt-3 dark:bg-black">
+        <div className="z-50 flex min-h-[56px] w-64 items-center justify-between bg-white px-6 pt-3 dark:bg-dark-bg">
           <div className="text-xl font-bold text-gray-800 dark:text-white">
             EDLIST
           </div>
@@ -77,12 +77,7 @@ const Sidebar = () => {
         </div>
         {/* TEAM */}
         <div className="flex items-center gap-5 border-y-[1.5px] border-gray-200 px-8 py-4 dark:border-gray-700">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={40}
-            height={40}
-          />
+          <Image src="/logo.png" alt="Logo" width={40} height={40} />
           <div>
             <h3 className="text-md font-bold tracking-wide dark:text-gray-200">
               EDROH TEAM
@@ -93,88 +88,93 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-        {/* NAVBAR LINKS */}
-        <nav className="z-10 w-full">
-          <SidebarLink icon={Home} label="Home" href="/" />
-          <SidebarLink icon={Briefcase} label="Timeline" href="/timeline" />
-          <SidebarLink icon={Search} label="Search" href="/search" />
-          <SidebarLink icon={Settings} label="Settings" href="/settings" />
-          <SidebarLink icon={User} label="Users" href="/users" />
-          <SidebarLink icon={Users} label="Teams" href="/teams" />
-        </nav>
+        
+        {/* SCROLLABLE CONTENT */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          {/* NAVBAR LINKS */}
+          <nav className="z-10 w-full">
+            <SidebarLink icon={Home} label="Home" href="/" />
+            <SidebarLink icon={Briefcase} label="Timeline" href="/timeline" />
+            <SidebarLink icon={Search} label="Search" href="/search" />
+            <SidebarLink icon={Settings} label="Settings" href="/settings" />
+            <SidebarLink icon={User} label="Users" href="/users" />
+            <SidebarLink icon={Users} label="Teams" href="/teams" />
+          </nav>
 
-        {/* PROJECTS LINKS */}
-        <button
-          onClick={() => setShowProjects((prev) => !prev)}
-          className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
-        >
-          <span className="">Projects</span>
-          {showProjects ? (
-            <ChevronUp className="h-5 w-5" />
-          ) : (
-            <ChevronDown className="h-5 w-5" />
-          )}
-        </button>
-        {/* LIST OF PROJECTS */}
-        <div className="flex flex-col">
+          {/* PROJECTS LINKS */}
           <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-3 px-8 py-3 text-sm font-medium text-blue-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+            onClick={() => setShowProjects((prev) => !prev)}
+            className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
           >
-            <PlusSquare className="h-4 w-4" />
-            <span>Create New Project</span>
+            <span className="">Projects</span>
+            {showProjects ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
           </button>
-          
-          {showProjects &&
-            projects?.map((project) => (
-              <SidebarLink
-                key={project.id}
-                icon={Briefcase}
-                label={project.name}
-                href={`/projects/${project.id}`}
-              />
-            ))}
-        </div>
+          {/* LIST OF PROJECTS */}
+          <div className="flex flex-col">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-3 px-8 py-3 text-sm font-medium text-blue-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+            >
+              <PlusSquare className="h-4 w-4" />
+              <span>Create New Project</span>
+            </button>
+            
+            {showProjects &&
+              projects?.map((project) => (
+                <SidebarLink
+                  key={project.id}
+                  icon={Briefcase}
+                  label={project.name}
+                  href={`/projects/${project.id}`}
+                />
+              ))}
+          </div>
 
-        {/* PRIORITIES LINKS */}
-        <button
-          onClick={() => setShowPriority((prev) => !prev)}
-          className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
-        >
-          <span className="">Priority</span>
-          {showPriority ? (
-            <ChevronUp className="h-5 w-5" />
-          ) : (
-            <ChevronDown className="h-5 w-5" />
+          {/* PRIORITIES LINKS */}
+          <button
+            onClick={() => setShowPriority((prev) => !prev)}
+            className="flex w-full items-center justify-between px-8 py-3 text-gray-500"
+          >
+            <span className="">Priority</span>
+            {showPriority ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
+          </button>
+          {showPriority && (
+            <>
+              <SidebarLink
+                icon={AlertCircle}
+                label="Urgent"
+                href="/priority/urgent"
+              />
+              <SidebarLink
+                icon={ShieldAlert}
+                label="High"
+                href="/priority/high"
+              />
+              <SidebarLink
+                icon={AlertTriangle}
+                label="Medium"
+                href="/priority/medium"
+              />
+              <SidebarLink icon={AlertOctagon} label="Low" href="/priority/low" />
+              <SidebarLink
+                icon={Layers3}
+                label="Backlog"
+                href="/priority/backlog"
+              />
+            </>
           )}
-        </button>
-        {showPriority && (
-          <>
-            <SidebarLink
-              icon={AlertCircle}
-              label="Urgent"
-              href="/priority/urgent"
-            />
-            <SidebarLink
-              icon={ShieldAlert}
-              label="High"
-              href="/priority/high"
-            />
-            <SidebarLink
-              icon={AlertTriangle}
-              label="Medium"
-              href="/priority/medium"
-            />
-            <SidebarLink icon={AlertOctagon} label="Low" href="/priority/low" />
-            <SidebarLink
-              icon={Layers3}
-              label="Backlog"
-              href="/priority/backlog"
-            />
-          </>
-        )}
+        </div>
       </div>
-      <div className="z-10 mt-32 flex w-full flex-col items-center gap-4 bg-white px-8 py-4 dark:bg-black md:hidden">
+      
+      <div className="z-10 mt-32 flex w-full flex-col items-center gap-4 bg-white px-8 py-4 dark:bg-dark-bg md:hidden">
           <div className="align-center flex h-9 w-9 justify-center">
             {!!currentUser?.profilePictureUrl ? (
               <Image
@@ -228,16 +228,16 @@ const SidebarLink = ({ href, icon: Icon, label }: SidebarLinkProps) => {
   return (
     <Link href={href} className="w-full">
       <div
-        className={`relative flex cursor-pointer items-center gap-3 transition-colors hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-700 ${
-          isActive ? "bg-gray-100 text-white dark:bg-gray-600" : ""
+        className={`relative flex cursor-pointer items-center gap-3 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700 ${
+          isActive ? "bg-gray-100 text-gray-900 dark:bg-gray-600 dark:text-gray-100" : "text-gray-800 dark:text-gray-100"
         } justify-start px-8 py-3`}
       >
         {isActive && (
           <div className="absolute left-0 top-0 h-[100%] w-[5px] bg-blue-200" />
         )}
 
-        <Icon className="h-6 w-6 text-gray-800 dark:text-gray-100" />
-        <span className={`font-medium text-gray-800 dark:text-gray-100`}>
+        <Icon className="h-6 w-6" />
+        <span className={`font-medium`}>
           {label}
         </span>
       </div>
