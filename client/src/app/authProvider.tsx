@@ -9,6 +9,7 @@ import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 
 import { fetchAuthSession, fetchUserAttributes } from "aws-amplify/auth";
+import { Hub } from "aws-amplify/utils";
 
 Amplify.configure({
   Auth: {
@@ -102,6 +103,19 @@ const AuthSync = ({ user }: { user: any }) => {
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  React.useEffect(() => {
+    const hubListenerCancel = Hub.listen("auth", ({ payload }) => {
+      switch (payload.event) {
+        case "signedIn":
+        case "signedOut":
+          window.location.reload();
+          break;
+      }
+    });
+
+    return () => hubListenerCancel();
+  }, []);
+
   return (
     <div className="mt-5">
       <Authenticator loginMechanisms={["email"]} formFields={formFields}>

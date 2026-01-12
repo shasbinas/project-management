@@ -45,21 +45,21 @@ const storage =
     ? createNoopStorage()
     : createWebStorage("local");
 
-const persistConfig = {
-  key: "root",
+const globalPersistConfig = {
+  key: "global",
   storage,
-  whitelist: ["global"],
+  whitelist: ["isSidebarCollapsed", "isDarkMode"],
 };
+
 const rootReducer = combineReducers({
-  global: globalReducer,
+  global: persistReducer(globalPersistConfig, globalReducer),
   [api.reducerPath]: api.reducer,
 });
-const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 /* REDUX STORE */
 export const makeStore = () => {
   return configureStore({
-    reducer: persistedReducer,
+    reducer: rootReducer,
     middleware: (getDefault) =>
       getDefault({
         serializableCheck: {
