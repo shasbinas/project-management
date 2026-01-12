@@ -28,8 +28,50 @@ import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 
 const taskColumns: GridColDef[] = [
   { field: "title", headerName: "Title", width: 200 },
-  { field: "status", headerName: "Status", width: 150 },
-  { field: "priority", headerName: "Priority", width: 150 },
+  {
+    field: "status",
+    headerName: "Status",
+    width: 150,
+    renderCell: (params) => (
+      <span
+        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+          params.value === "To Do"
+            ? "bg-gray-100 text-gray-800"
+            : params.value === "Work In Progress"
+              ? "bg-blue-100 text-blue-800"
+              : params.value === "Under Review"
+                ? "bg-orange-100 text-orange-800"
+                : params.value === "Completed"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-gray-100 text-gray-800"
+        }`}
+      >
+        {params.value}
+      </span>
+    ),
+  },
+  {
+    field: "priority",
+    headerName: "Priority",
+    width: 150,
+    renderCell: (params) => (
+      <span
+        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+          params.value === "Urgent"
+            ? "bg-red-200 text-red-700"
+            : params.value === "High"
+              ? "bg-orange-200 text-orange-700"
+              : params.value === "Medium"
+                ? "bg-yellow-200 text-yellow-700"
+                : params.value === "Low"
+                  ? "bg-blue-200 text-blue-700"
+                  : "bg-gray-200 text-gray-700"
+        }`}
+      >
+        {params.value}
+      </span>
+    ),
+  },
   { field: "dueDate", headerName: "Due Date", width: 150 },
 ];
 
