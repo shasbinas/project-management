@@ -115,7 +115,24 @@ const HomePage = () => {
                 }}
               />
               <Legend />
-              <Bar dataKey="count" fill={chartColors.bar} />
+              <Bar dataKey="count">
+                {taskDistribution.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={
+                      (
+                        {
+                          Urgent: "#DC2626",
+                          High: "#F97316",
+                          Medium: "#FACC15",
+                          Low: "#3B82F6",
+                          Backlog: "#6B7280",
+                        } as Record<string, string>
+                      )[entry.name] || chartColors.bar
+                    }
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>

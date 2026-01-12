@@ -70,10 +70,10 @@ const TaskColumn = ({
   const tasksCount = tasks.filter((task) => task.status === status).length;
 
   const statusColor: any = {
-    "To Do": "#2563EB",
-    "Work In Progress": "#059669",
+    "To Do": "#6B7280",
+    "Work In Progress": "#2563EB",
     "Under Review": "#D97706",
-    Completed: "#000000",
+    Completed: "#16A34A",
   };
 
   return (
@@ -151,9 +151,9 @@ const Task = ({ task }: TaskProps) => {
         priority === "Urgent"
           ? "bg-red-200 text-red-700"
           : priority === "High"
-            ? "bg-yellow-200 text-yellow-700"
+            ? "bg-orange-200 text-orange-700"
             : priority === "Medium"
-              ? "bg-green-200 text-green-700"
+              ? "bg-yellow-200 text-yellow-700"
               : priority === "Low"
                 ? "bg-blue-200 text-blue-700"
                 : "bg-gray-200 text-gray-700"

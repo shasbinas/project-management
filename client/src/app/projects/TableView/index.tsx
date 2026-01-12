@@ -25,16 +25,54 @@ const columns: GridColDef[] = [
     field: "status",
     headerName: "Status",
     width: 130,
-    renderCell: (params) => (
-      <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-        {params.value}
-      </span>
-    ),
+    renderCell: (params) => {
+      const getStatusColor = (status: string) => {
+        switch (status) {
+          case "To Do":
+            return "bg-gray-100 text-gray-800";
+          case "Work In Progress":
+            return "bg-blue-100 text-blue-800";
+          case "Under Review":
+            return "bg-orange-100 text-orange-800";
+          case "Completed":
+            return "bg-green-100 text-green-800";
+          default:
+            return "bg-gray-100 text-gray-800";
+        }
+      };
+
+      return (
+        <span
+          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
+            params.value,
+          )}`}
+        >
+          {params.value}
+        </span>
+      );
+    },
   },
   {
     field: "priority",
     headerName: "Priority",
     width: 75,
+    renderCell: (params) => (
+      <span
+        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+          params.value === "Urgent"
+            ? "bg-red-200 text-red-700"
+            : params.value === "High"
+              ? "bg-orange-200 text-orange-700"
+              : params.value === "Medium"
+                ? "bg-yellow-200 text-yellow-700"
+                : params.value === "Low"
+                  ? "bg-blue-200 text-blue-700"
+                  : "bg-gray-200 text-gray-700"
+        }`}
+      >
+        {params.value}
+      </span>
+    ),
   },
   {
     field: "tags",
