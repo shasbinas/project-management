@@ -6,10 +6,21 @@ import TaskCard from "@/components/TaskCard";
 import UserCard from "@/components/UserCard";
 import { useSearchQuery } from "@/state/api";
 import { debounce } from "lodash";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+// ... imports
 
 const Search = () => {
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query");
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    if (queryParam) {
+      setSearchTerm(queryParam);
+    }
+  }, [queryParam]);
+
   const {
     data: searchResults,
     isLoading,

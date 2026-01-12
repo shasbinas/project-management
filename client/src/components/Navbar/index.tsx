@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Menu, Moon, Search, Settings, Sun, User } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { logout, setIsDarkMode, setIsSidebarCollapsed } from "@/state";
 import Image from "next/image";
 import { signOut } from "aws-amplify/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -12,8 +13,19 @@ const Navbar = () => {
     (state) => state.global.isSidebarCollapsed,
   );
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
-
   const currentUser = useAppSelector((state) => state.global.user);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("query");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (queryParam) {
+      setSearchQuery(queryParam);
+    } else {
+      setSearchQuery("");
+    }
+  }, [queryParam]);
 
   const handleSignOut = async () => {
     try {
@@ -21,6 +33,12 @@ const Navbar = () => {
       dispatch(logout());
     } catch (error) {
       console.error("Error signing out: ", error);
+    }
+  };
+  
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+        router.push(`/search?query=${searchQuery}`);
     }
   };
 
@@ -43,6 +61,9 @@ const Navbar = () => {
             className="w-full rounded border-none bg-gray-100 p-2 pl-8 placeholder-gray-500 focus:border-transparent focus:outline-none dark:bg-gray-700 dark:text-white dark:placeholder-white"
             type="search"
             placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearch}
           />
         </div>
       </div>
