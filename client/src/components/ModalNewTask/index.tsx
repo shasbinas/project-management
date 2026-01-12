@@ -24,6 +24,7 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
   const [dueDate, setDueDate] = useState("");
   const [assignedUserId, setAssignedUserId] = useState("");
   const [projectId, setProjectId] = useState("");
+  const [authorUserId, setAuthorUserId] = useState("");
 
   const handleSubmit = async () => {
     if (!title || !currentUser?.userId || !(id !== null || projectId)) return;
@@ -45,7 +46,7 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
         tags,
         startDate: formattedStartDate,
         dueDate: formattedDueDate,
-        authorUserId: currentUser.userId,
+        authorUserId: authorUserId ? parseInt(authorUserId) : currentUser.userId,
         assignedUserId: assignedUserId ? parseInt(assignedUserId) : undefined,
         projectId: id !== null ? Number(id) : Number(projectId),
       }).unwrap();
@@ -59,6 +60,7 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
       setStartDate("");
       setDueDate("");
       setAssignedUserId("");
+      setAuthorUserId("");
       setProjectId("");
       onClose();
     } catch (error) {
@@ -160,6 +162,19 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
           onChange={(e) => setAssignedUserId(e.target.value)}
         >
           <option value="">Assign To (Optional)</option>
+          {users?.map((user) => (
+            <option key={user.userId} value={user.userId}>
+              {user.username}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className={selectStyles}
+          value={authorUserId}
+          onChange={(e) => setAuthorUserId(e.target.value)}
+        >
+          <option value="">Author (Optional)</option>
           {users?.map((user) => (
             <option key={user.userId} value={user.userId}>
               {user.username}
