@@ -157,7 +157,7 @@ const HomePage = () => {
                 }}
               />
               <Legend />
-              <Bar dataKey="count">
+              <Bar dataKey="count" fill="#2196F3">
                 {taskDistribution.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
