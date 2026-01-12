@@ -8,6 +8,7 @@ import React from "react";
 type Props = {
   id: string;
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
+  searchQuery: string;
 };
 
 const columns: GridColDef[] = [
@@ -103,7 +104,7 @@ const columns: GridColDef[] = [
   },
 ];
 
-const TableView = ({ id, setIsModalNewTaskOpen }: Props) => {
+const TableView = ({ id, setIsModalNewTaskOpen, searchQuery }: Props) => {
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
   const {
     data: tasks,
@@ -113,6 +114,12 @@ const TableView = ({ id, setIsModalNewTaskOpen }: Props) => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error || !tasks) return <div>An error occurred while fetching tasks</div>;
+
+  const filteredTasks = tasks.filter(
+    (task) =>
+      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="h-[540px] w-full px-4 pb-8 xl:px-6">
@@ -131,7 +138,7 @@ const TableView = ({ id, setIsModalNewTaskOpen }: Props) => {
         />
       </div>
       <DataGrid
-        rows={tasks || []}
+        rows={filteredTasks}
         columns={columns}
         className={dataGridClassNames}
         sx={dataGridSxStyles(isDarkMode)}

@@ -34,6 +34,14 @@ export interface User {
   team?: Team;
 }
 
+export interface Comment {
+  id: number;
+  text: string;
+  taskId: number;
+  userId: number;
+  user?: User;
+}
+
 export interface Attachment {
   id: number;
   fileURL: string;
@@ -41,6 +49,9 @@ export interface Attachment {
   taskId: number;
   uploadedById: number;
 }
+// ... (rest of file)
+
+
 
 export interface Task {
   id: number;
@@ -163,6 +174,31 @@ export const api = createApi({
         { type: "Tasks", id: taskId },
       ],
     }),
+    updateTask: build.mutation<Task, { taskId: number; task: Partial<Task> }>({
+      query: ({ taskId, task }) => ({
+        url: `tasks/${taskId}`,
+        method: "PATCH",
+        body: task,
+      }),
+      invalidatesTags: (result, error, { taskId }) => [
+        { type: "Tasks", id: taskId },
+      ],
+    }),
+    createComment: build.mutation<Comment, { taskId: number; content: string; authorUserId: number }>({
+      query: (comment) => ({
+        url: `tasks/comments`,
+        method: "POST",
+        body: comment,
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
+    deleteTask: build.mutation<void, number>({
+      query: (taskId) => ({
+        url: `tasks/${taskId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Tasks"],
+    }),
     getUsers: build.query<User[], void>({
       query: () => "users",
       providesTags: (result) =>
@@ -234,4 +270,7 @@ export const {
   useLogoutMutation,
   useGetAuthUserQuery,
   useUploadImageMutation,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+  useCreateCommentMutation,
 } = api;

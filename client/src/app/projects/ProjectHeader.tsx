@@ -14,10 +14,25 @@ import ModalNewProject from "./ModalNewProject";
 type Props = {
   activeTab: string;
   setActiveTab: (tabName: string) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 };
 
-const ProjectHeader = ({ activeTab, setActiveTab }: Props) => {
+const ProjectHeader = ({ activeTab, setActiveTab, searchQuery, setSearchQuery }: Props) => {
   const [isModalNewProjectOpen, setIsModalNewProjectOpen] = useState(false);
+
+  const handleShare = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Project link copied to clipboard!"); 
+    }
+  };
+
+  const handleFilter = () => {
+    // For now, we'll just log or show a simple indication
+    console.log("Filter button clicked");
+    // You could expand this to open a modal in the future
+  };
 
   return (
     <div className="px-4 xl:px-6">
@@ -68,10 +83,18 @@ const ProjectHeader = ({ activeTab, setActiveTab }: Props) => {
           />
         </div>
         <div className="flex items-center gap-2">
-          <button className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300">
+          <button 
+            className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300 transition-colors"
+            onClick={handleFilter}
+            aria-label="Filter"
+          >
             <Filter className="h-5 w-5" />
           </button>
-          <button className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300">
+          <button 
+            className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300 transition-colors"
+            onClick={handleShare}
+            aria-label="Share"
+          >
             <Share2 className="h-5 w-5" />
           </button>
           <div className="relative">
@@ -79,6 +102,8 @@ const ProjectHeader = ({ activeTab, setActiveTab }: Props) => {
               type="text"
               placeholder="Search Task"
               className="rounded-md border py-1 pl-10 pr-4 focus:outline-none dark:border-dark-secondary dark:bg-dark-secondary dark:text-white"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <Grid3x3 className="absolute left-3 top-2 h-4 w-4 text-gray-400 dark:text-neutral-500" />
           </div>

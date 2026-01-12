@@ -7,11 +7,12 @@ import React, { useMemo, useState } from "react";
 type Props = {
   id: string;
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
+  searchQuery: string;
 };
 
 type TaskTypeItems = "task" | "milestone" | "project";
 
-const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
+const Timeline = ({ id, setIsModalNewTaskOpen, searchQuery }: Props) => {
   const isDarkMode = useAppSelector((state) => state.global.isDarkMode);
   const {
     data: tasks,
@@ -27,7 +28,13 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
   const ganttTasks = useMemo(() => {
     return (
       tasks
-        ?.filter((task) => task.startDate && task.dueDate)
+        ?.filter(
+          (task) =>
+            task.startDate &&
+            task.dueDate &&
+            (task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              task.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
         .map((task) => ({
           start: new Date(task.startDate as string),
           end: new Date(task.dueDate as string),
@@ -38,7 +45,7 @@ const Timeline = ({ id, setIsModalNewTaskOpen }: Props) => {
           isDisabled: false,
         })) || []
     );
-  }, [tasks]);
+  }, [tasks, searchQuery]);
 
   const handleViewModeChange = (
     event: React.ChangeEvent<HTMLSelectElement>,

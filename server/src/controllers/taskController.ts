@@ -13,7 +13,11 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
       include: {
         author: true,
         assignee: true,
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
         attachments: true,
       },
     });
@@ -112,3 +116,82 @@ export const getUserTasks = async (
       .json({ message: `Error retrieving user's tasks: ${error.message}` });
   }
 };
+
+export const deleteTask = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { taskId } = req.params;
+  try {
+    await prisma.task.delete({
+      where: {
+        id: Number(taskId),
+      },
+    });
+    res.status(204).send();
+  } catch (error: any) {
+    res.status(500).json({ message: `Error deleting task: ${error.message}` });
+  }
+};
+
+export const updateTask = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { taskId } = req.params;
+  const {
+    title,
+    description,
+    status,
+    priority,
+    tags,
+    startDate,
+    dueDate,
+    points,
+    assignedUserId,
+    authorUserId,
+  } = req.body;
+
+  try {
+    const updatedTask = await prisma.task.update({
+      where: {
+        id: Number(taskId),
+      },
+      data: {
+        title,
+        description,
+        status,
+        priority,
+        tags,
+        startDate,
+        dueDate,
+        points,
+        assignedUserId,
+        authorUserId,
+      },
+    });
+    res.json(updatedTask);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error updating task: ${error.message}` });
+  }
+};
+
+export const createComment = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { taskId, content, authorUserId } = req.body;
+  try {
+    const newComment = await prisma.comment.create({
+      data: {
+        taskId: Number(taskId),
+        text: content,
+        userId: Number(authorUserId),
+      },
+    });
+    res.status(201).json(newComment);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error creating comment: ${error.message}` });
+  }
+};
+

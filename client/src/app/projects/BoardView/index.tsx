@@ -1,44 +1,81 @@
-import { useGetTasksQuery, useUpdateTaskStatusMutation } from "@/state/api";
-import React from "react";
+import { useDeleteTaskMutation, useGetTasksQuery, useUpdateTaskStatusMutation } from "@/state/api";
+import React, { useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Task as TaskType } from "@/state/api";
-import { EllipsisVertical, MessageSquareMore, Plus } from "lucide-react";
+import { EllipsisVertical, MessageSquareMore, Plus, Trash2, Edit } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
+import ModalEditTask from "@/components/ModalEditTask";
+import ModalComments from "@/components/ModalComments";
 
 type BoardProps = {
   id: string;
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
+  searchQuery: string;
 };
 
 const taskStatus = ["To Do", "Work In Progress", "Under Review", "Completed"];
 
-const BoardView = ({ id, setIsModalNewTaskOpen }: BoardProps) => {
+const BoardView = ({ id, setIsModalNewTaskOpen, searchQuery }: BoardProps) => {
   const {
     data: tasks,
     isLoading,
     error,
   } = useGetTasksQuery({ projectId: Number(id) });
   const [updateTaskStatus] = useUpdateTaskStatusMutation();
+  const [isModalEditTaskOpen, setIsModalEditTaskOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<TaskType | null>(null);
+  const [isModalCommentsOpen, setIsModalCommentsOpen] = useState(false);
+  const [taskForComments, setTaskForComments] = useState<TaskType | null>(null);
 
   const moveTask = (taskId: number, toStatus: string) => {
     updateTaskStatus({ taskId, status: toStatus });
   };
 
+  const handleEditTask = (task: TaskType) => {
+    setTaskToEdit(task);
+    setIsModalEditTaskOpen(true);
+  };
+
+  const handleOpenComments = (task: TaskType) => {
+    setTaskForComments(task);
+    setIsModalCommentsOpen(true);
+  };
+  
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>An error occurred while fetching tasks</div>;
 
+  const filteredTasks = tasks
+    ? tasks.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
   return (
     <DndProvider backend={HTML5Backend}>
+      <ModalEditTask
+        isOpen={isModalEditTaskOpen}
+        onClose={() => setIsModalEditTaskOpen(false)}
+        task={taskToEdit}
+      />
+      <ModalComments
+        isOpen={isModalCommentsOpen}
+        onClose={() => setIsModalCommentsOpen(false)}
+        task={taskForComments}
+      />
       <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 xl:grid-cols-4">
         {taskStatus.map((status) => (
           <TaskColumn
             key={status}
             status={status}
-            tasks={tasks || []}
+            tasks={filteredTasks}
             moveTask={moveTask}
             setIsModalNewTaskOpen={setIsModalNewTaskOpen}
+            handleEditTask={handleEditTask}
+            handleOpenComments={handleOpenComments}
           />
         ))}
       </div>
@@ -51,6 +88,8 @@ type TaskColumnProps = {
   tasks: TaskType[];
   moveTask: (taskId: number, toStatus: string) => void;
   setIsModalNewTaskOpen: (isOpen: boolean) => void;
+  handleEditTask: (task: TaskType) => void;
+  handleOpenComments: (task: TaskType) => void;
 };
 
 const TaskColumn = ({
@@ -58,6 +97,8 @@ const TaskColumn = ({
   tasks,
   moveTask,
   setIsModalNewTaskOpen,
+  handleEditTask,
+  handleOpenComments,
 }: TaskColumnProps) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "task",
@@ -115,7 +156,7 @@ const TaskColumn = ({
       {tasks
         .filter((task) => task.status === status)
         .map((task) => (
-          <Task key={task.id} task={task} />
+          <Task key={task.id} task={task} handleEditTask={handleEditTask} handleOpenComments={handleOpenComments}/>
         ))}
     </div>
   );
@@ -123,9 +164,11 @@ const TaskColumn = ({
 
 type TaskProps = {
   task: TaskType;
+  handleEditTask: (task: TaskType) => void;
+  handleOpenComments: (task: TaskType) => void;
 };
 
-const Task = ({ task }: TaskProps) => {
+const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: "task",
     item: { id: task.id },
@@ -133,6 +176,8 @@ const Task = ({ task }: TaskProps) => {
       isDragging: !!monitor.isDragging(),
     }),
   }));
+  const [deleteTask] = useDeleteTaskMutation();
+  const [showMenu, setShowMenu] = useState(false);
 
   const taskTagsSplit = task.tags ? task.tags.split(",") : [];
 
@@ -144,6 +189,13 @@ const Task = ({ task }: TaskProps) => {
     : "";
 
   const numberOfComments = (task.comments && task.comments.length) || 0;
+
+  const handleDelete = async () => {
+    if (confirm("Are you sure you want to delete this task?")) {
+      await deleteTask(task.id);
+    }
+    setShowMenu(false);
+  };
 
   const PriorityTag = ({ priority }: { priority: TaskType["priority"] }) => (
     <div
@@ -199,9 +251,35 @@ const Task = ({ task }: TaskProps) => {
               ))}
             </div>
           </div>
-          <button className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500">
-            <EllipsisVertical size={26} />
-          </button>
+          <div className="relative">
+            <button
+              className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500"
+              onClick={() => setShowMenu(!showMenu)}
+            >
+              <EllipsisVertical size={26} />
+            </button>
+            {showMenu && (
+              <div className="absolute right-0 top-6 z-10 w-32 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-dark-tertiary">
+                <div className="py-1">
+                  <button
+                    className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                    onClick={() => {
+                        setShowMenu(false);
+                        handleEditTask(task);
+                    }}
+                  >
+                    <Edit className="mr-2 h-4 w-4" /> Edit
+                  </button>
+                  <button
+                    className="flex w-full items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+                    onClick={handleDelete}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" /> Delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="my-3 flex justify-between">
@@ -250,7 +328,10 @@ const Task = ({ task }: TaskProps) => {
               />
             )}
           </div>
-          <div className="flex items-center text-gray-500 dark:text-neutral-500">
+          <div 
+            className="flex items-center text-gray-500 dark:text-neutral-500 cursor-pointer hover:text-blue-500"
+            onClick={() => handleOpenComments(task)}
+          >
             <MessageSquareMore size={20} />
             <span className="ml-1 text-sm dark:text-neutral-400">
               {numberOfComments}
