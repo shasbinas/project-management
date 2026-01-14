@@ -42,7 +42,6 @@ const Timeline = () => {
               progressColor: status === "Completed" ? "#10b981" : "#3b82f6",
               backgroundColor: status === "Completed" ? "#059669" : "#2563eb",
             },
-            // Custom data for our list view
             _status: status, 
           };
         }) || []
@@ -85,44 +84,13 @@ const Timeline = () => {
               tasks={ganttTasks}
               {...displayOptions}
               columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
-              listCellWidth="100px"
+              listCellWidth="340px"
               barCornerRadius={4}
               projectBackgroundColor={isDarkMode ? "#0275ff" : "#1f2937"}
               projectProgressColor={isDarkMode ? "#0275ff" : "#aeb8c2"}
               projectProgressSelectedColor={isDarkMode ? "#0275ff" : "#9ba1a6"}
-              
-              // Custom List Header
-              TaskListHeader={({ headerHeight }) => (
-                <div 
-                   className="flex items-center font-bold pl-4 border-r border-[#e0e0e0] dark:border-dark-tertiary bg-gray-100 dark:bg-dark-tertiary text-gray-700 dark:text-white"
-                   style={{ height: headerHeight, width: "340px" }} // Explicit width matching table
-                >
-                    <div className="w-40">Name</div>
-                    <div className="w-24 text-center">From</div>
-                    <div className="w-24 text-center">To</div>
-                </div>
-              )}
-              
-              // Custom List Table (The Rows)
-              TaskListTable={({ rowHeight, tasks, fontFamily, fontSize }) => (
-                  <div className="border-r border-[#e0e0e0] dark:border-dark-tertiary" style={{ width: "340px" }}>
-                      {tasks.map((task) => (
-                           <div 
-                              key={task.id} 
-                              className="flex items-center pl-4 border-b border-gray-100 dark:border-dark-tertiary hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                              style={{ height: rowHeight, fontFamily, fontSize }}
-                           >
-                               <div className="w-40 truncate">{task.name}</div>
-                               <div className="w-24 text-center text-xs text-gray-500 dark:text-gray-400">
-                                   {task.start.toLocaleDateString()}
-                               </div>
-                               <div className="w-24 text-center text-xs text-gray-500 dark:text-gray-400">
-                                   {task.end.toLocaleDateString()}
-                               </div>
-                           </div>
-                      ))}
-                  </div>
-              )}
+              TaskListHeader={TaskListHeader}
+              TaskListTable={TaskListTable}
             />
           ) : (
             <div className="p-5 text-center text-gray-500">
@@ -134,5 +102,62 @@ const Timeline = () => {
     </div>
   );
 };
+
+const TaskListHeader: React.FC<{
+    headerHeight: number;
+    rowWidth: string;
+    fontFamily: string;
+    fontSize: string;
+  }> = ({ headerHeight }) => {
+    return (
+      <div
+        className="flex items-center border-b border-gray-200 bg-white font-bold dark:border-stroke-dark dark:bg-dark-secondary dark:text-white pl-4"
+        style={{ height: headerHeight, width: "340px" }}
+      >
+        <div className="w-40">Name</div>
+        <div className="w-[1px] h-full bg-gray-200 dark:bg-stroke-dark" />
+        <div className="w-24 text-center">From</div>
+        <div className="w-[1px] h-full bg-gray-200 dark:bg-stroke-dark" />
+        <div className="w-24 text-center">To</div>
+      </div>
+    );
+  };
+  
+  const TaskListTable: React.FC<{
+    rowHeight: number;
+    rowWidth: string;
+    fontFamily: string;
+    fontSize: string;
+    locale: string;
+    tasks: any[];
+    selectedTaskId: string;
+    setSelectedTask: (taskId: string) => void;
+    onExpanderClick: (task: any) => void;
+  }> = ({ rowHeight, tasks, fontFamily, fontSize }) => {
+    return (
+      <div
+        className="bg-white dark:bg-dark-secondary"
+        style={{ width: "340px" }}
+      >
+        {tasks.map((task) => (
+          <div
+            key={task.id}
+            className="flex items-center border-b border-gray-100 text-xs dark:border-stroke-dark dark:text-white pl-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            style={{ height: rowHeight, fontFamily, fontSize }}
+          >
+            <div className="w-40 truncate dark:text-white font-medium">{task.name}</div>
+            <div className="w-[1px] h-full bg-gray-100 dark:bg-stroke-dark" />
+            <div className="w-24 text-center dark:text-white text-xs text-gray-500 dark:text-gray-400">
+                {task.start.toLocaleDateString()}
+            </div>
+            <div className="w-[1px] h-full bg-gray-100 dark:bg-stroke-dark" />
+            <div className="w-24 text-center dark:text-white text-xs text-gray-500 dark:text-gray-400">
+                {task.end.toLocaleDateString()}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
 export default Timeline;

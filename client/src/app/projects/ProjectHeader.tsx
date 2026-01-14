@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import React, { useState } from "react";
 import ModalNewProject from "./ModalNewProject";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Props = {
   activeTab: string;
@@ -29,9 +30,7 @@ const ProjectHeader = ({ activeTab, setActiveTab, searchQuery, setSearchQuery }:
   };
 
   const handleFilter = () => {
-    // For now, we'll just log or show a simple indication
     console.log("Filter button clicked");
-    // You could expand this to open a modal in the future
   };
 
   return (
@@ -44,19 +43,21 @@ const ProjectHeader = ({ activeTab, setActiveTab, searchQuery, setSearchQuery }:
         <Header
           name="Product Design Development"
           buttonComponent={
-            <button
-              className="flex items-center rounded-md bg-blue-primary px-3 py-2 text-white hover:bg-blue-600"
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center rounded-md bg-blue-primary px-3 py-2 text-white hover:bg-blue-600 transition-all shadow-md active:shadow-sm"
               onClick={() => setIsModalNewProjectOpen(true)}
             >
               <PlusSquare className="mr-2 h-5 w-5" /> New Boards
-            </button>
+            </motion.button>
           }
         />
       </div>
 
       {/* TABS */}
-      <div className="flex flex-wrap-reverse gap-2 border-y border-gray-200 pb-[8px] pt-2 dark:border-stroke-dark md:items-center">
-        <div className="flex flex-1 items-center gap-2 md:gap-4">
+      <div className="flex flex-wrap-reverse gap-2 border-y border-gray-200 pb-[8px] pt-2 dark:border-gray-800 md:items-center">
+        <div className="flex flex-1 items-center gap-2 md:gap-4 overflow-x-auto no-scrollbar">
           <TabButton
             name="Board"
             icon={<Grid3x3 className="h-5 w-5" />}
@@ -83,29 +84,33 @@ const ProjectHeader = ({ activeTab, setActiveTab, searchQuery, setSearchQuery }:
           />
         </div>
         <div className="flex items-center gap-2">
-          <button 
-            className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300 transition-colors"
+          <motion.button 
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(0,0,0,0.05)" }}
+            whileTap={{ scale: 0.9 }}
+            className="text-gray-500 hover:text-gray-700 dark:text-neutral-500 dark:hover:text-white transition-colors p-2 rounded-lg"
             onClick={handleFilter}
             aria-label="Filter"
           >
             <Filter className="h-5 w-5" />
-          </button>
-          <button 
-            className="text-gray-500 hover:text-gray-600 dark:text-neutral-500 dark:hover:text-gray-300 transition-colors"
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(0,0,0,0.05)" }}
+            whileTap={{ scale: 0.9 }}
+            className="text-gray-500 hover:text-gray-700 dark:text-neutral-500 dark:hover:text-white transition-colors p-2 rounded-lg"
             onClick={handleShare}
             aria-label="Share"
           >
             <Share2 className="h-5 w-5" />
-          </button>
+          </motion.button>
           <div className="relative">
             <input
               type="text"
               placeholder="Search Task"
-              className="rounded-md border py-1 pl-10 pr-4 focus:outline-none dark:border-dark-secondary dark:bg-dark-secondary dark:text-white"
+              className="rounded-lg border py-2 pl-10 pr-4 focus:outline-none dark:border-gray-700 dark:bg-dark-secondary dark:text-white text-sm transition-all focus:ring-2 focus:ring-blue-500/20 bg-gray-50"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <Grid3x3 className="absolute left-3 top-2 h-4 w-4 text-gray-400 dark:text-neutral-500" />
+            <Grid3x3 className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 dark:text-neutral-500" />
           </div>
         </div>
       </div>
@@ -125,13 +130,30 @@ const TabButton = ({ name, icon, setActiveTab, activeTab }: TabButtonProps) => {
 
   return (
     <button
-      className={`relative flex items-center gap-2 px-1 py-2 text-gray-500 after:absolute after:-bottom-[9px] after:left-0 after:h-[1px] after:w-full hover:text-blue-600 dark:text-neutral-500 dark:hover:text-white sm:px-2 lg:px-4 ${
-        isActive ? "text-blue-600 after:bg-blue-600 dark:text-white" : ""
+      className={`relative flex items-center gap-2 px-1 py-2 text-sm font-semibold transition-all sm:px-2 lg:px-4 group ${
+        isActive 
+          ? "text-blue-600 dark:text-white" 
+          : "text-gray-500 hover:text-blue-600 dark:text-neutral-500 dark:hover:text-white"
       }`}
       onClick={() => setActiveTab(name)}
     >
-      {icon}
-      {name}
+      <motion.div 
+        className="flex items-center gap-2 relative z-10"
+        whileHover={!isActive ? { y: -2 } : {}}
+      >
+        {icon}
+        {name}
+      </motion.div>
+      {isActive && (
+        <motion.div
+          layoutId="activeTabIndicator"
+          className="absolute -bottom-[9px] left-0 h-[3px] w-full bg-blue-600 dark:bg-white rounded-t-full"
+          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+        />
+      )}
+      {!isActive && (
+        <div className="absolute -bottom-[9px] left-0 h-[3px] w-0 bg-gray-200 dark:bg-gray-700 group-hover:w-full transition-all duration-300" />
+      )}
     </button>
   );
 };

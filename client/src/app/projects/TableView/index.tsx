@@ -1,9 +1,13 @@
+"use client";
+
 import { useAppSelector } from "@/app/redux";
 import Header from "@/components/Header";
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
 import { useGetTasksQuery } from "@/state/api";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
+import { motion } from "framer-motion";
+import { fadeInVariants } from "@/lib/animations";
 
 type Props = {
   id: string;
@@ -112,8 +116,8 @@ const TableView = ({ id, setIsModalNewTaskOpen, searchQuery }: Props) => {
     isLoading,
   } = useGetTasksQuery({ projectId: Number(id) });
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error || !tasks) return <div>An error occurred while fetching tasks</div>;
+  if (isLoading) return <div className="p-8">Loading...</div>;
+  if (error || !tasks) return <div className="p-8 text-rose-500 font-bold">An error occurred while fetching tasks</div>;
 
   const filteredTasks = tasks.filter(
     (task) =>
@@ -122,28 +126,38 @@ const TableView = ({ id, setIsModalNewTaskOpen, searchQuery }: Props) => {
   );
 
   return (
-    <div className="h-[540px] w-full px-4 pb-8 xl:px-6">
+    <motion.div 
+      initial="initial"
+      animate="animate"
+      variants={fadeInVariants}
+      className="h-[540px] w-full px-4 pb-8 xl:px-6"
+    >
       <div className="pt-5">
         <Header
           name="Table"
           buttonComponent={
-            <button
-              className="flex items-center rounded bg-blue-primary px-3 py-2 text-white hover:bg-blue-600"
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center rounded bg-blue-primary px-3 py-2 text-white hover:bg-blue-600 transition-colors shadow-sm"
               onClick={() => setIsModalNewTaskOpen(true)}
             >
               Add Task
-            </button>
+            </motion.button>
           }
           isSmallText
         />
       </div>
-      <DataGrid
-        rows={filteredTasks}
-        columns={columns}
-        className={dataGridClassNames}
-        sx={dataGridSxStyles(isDarkMode)}
-      />
-    </div>
+      <div className="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm">
+        <DataGrid
+            rows={filteredTasks}
+            columns={columns}
+            className={dataGridClassNames}
+            sx={dataGridSxStyles(isDarkMode)}
+            disableRowSelectionOnClick
+        />
+      </div>
+    </motion.div>
   );
 };
 

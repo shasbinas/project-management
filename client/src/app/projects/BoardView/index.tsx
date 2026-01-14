@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import Image from "next/image";
 import ModalEditTask from "@/components/ModalEditTask";
 import ModalComments from "@/components/ModalComments";
+import { motion } from "framer-motion";
+import { hoverScaleVariants } from "@/lib/animations";
 
 type BoardProps = {
   id: string;
@@ -43,8 +45,8 @@ const BoardView = ({ id, setIsModalNewTaskOpen, searchQuery }: BoardProps) => {
     setIsModalCommentsOpen(true);
   };
   
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>An error occurred while fetching tasks</div>;
+  if (isLoading) return <div className="p-8">Loading...</div>;
+  if (error) return <div className="p-8 text-rose-500 font-bold">An error occurred while fetching tasks</div>;
 
   const filteredTasks = tasks
     ? tasks.filter(
@@ -122,7 +124,7 @@ const TaskColumn = ({
       ref={(instance) => {
         drop(instance);
       }}
-      className={`sl:py-4 rounded-lg py-2 xl:px-2 ${isOver ? "bg-blue-100 dark:bg-neutral-950" : ""}`}
+      className={`sl:py-4 rounded-lg py-2 xl:px-2 ${isOver ? "bg-blue-100/50 dark:bg-neutral-900/50" : ""}`}
     >
       <div className="mb-3 flex w-full">
         <div
@@ -143,12 +145,14 @@ const TaskColumn = ({
             <button className="flex h-6 w-5 items-center justify-center dark:text-neutral-500">
               <EllipsisVertical size={26} />
             </button>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="flex h-6 w-6 items-center justify-center rounded bg-gray-200 dark:bg-dark-tertiary dark:text-white"
               onClick={() => setIsModalNewTaskOpen(true)}
             >
               <Plus size={16} />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
@@ -216,11 +220,14 @@ const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
   );
 
   return (
-    <div
+    <motion.div
+      variants={hoverScaleVariants}
+      whileHover="hover"
+      whileTap="tap"
       ref={(instance) => {
         drag(instance);
       }}
-      className={`mb-4 rounded-md bg-white shadow dark:bg-dark-secondary ${
+      className={`mb-4 rounded-md bg-white shadow dark:bg-dark-secondary transition-colors hover:border-blue-500/30 border border-transparent ${
         isDragging ? "opacity-50" : "opacity-100"
       }`}
     >
@@ -232,7 +239,7 @@ const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
           alt={task.attachments[0].fileName}
           width={400}
           height={200}
-          className="h-auto w-full rounded-t-md"
+          className="h-auto w-full rounded-t-md object-cover"
         />
       )}
       <div className="p-4 md:p-6">
@@ -253,13 +260,17 @@ const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
           </div>
           <div className="relative">
             <button
-              className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500"
+              className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500 hover:text-gray-700 dark:hover:text-white transition-colors"
               onClick={() => setShowMenu(!showMenu)}
             >
               <EllipsisVertical size={26} />
             </button>
             {showMenu && (
-              <div className="absolute right-0 top-6 z-10 w-32 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-dark-tertiary">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute right-0 top-6 z-10 w-32 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-dark-tertiary"
+              >
                 <div className="py-1">
                   <button
                     className="flex w-full items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
@@ -277,7 +288,7 @@ const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
                     <Trash2 className="mr-2 h-4 w-4" /> Delete
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
@@ -304,42 +315,47 @@ const Task = ({ task, handleEditTask, handleOpenComments }: TaskProps) => {
         <div className="mt-3 flex items-center justify-between">
           <div className="flex -space-x-[6px] overflow-hidden">
             {task.assignee && (
-              <Image
-                key={task.assignee.userId}
-                src={task.assignee.profilePictureUrl && task.assignee.profilePictureUrl.startsWith("http")
-                  ? task.assignee.profilePictureUrl
-                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.assignee.profilePictureUrl}`}
-                alt={task.assignee.username}
-                width={30}
-                height={30}
-                className="h-8 w-8 rounded-full border-2 border-white object-cover dark:border-dark-secondary"
-              />
+              <motion.div whileHover={{ zIndex: 10, scale: 1.1 }}>
+                <Image
+                  key={task.assignee.userId}
+                  src={task.assignee.profilePictureUrl && task.assignee.profilePictureUrl.startsWith("http")
+                    ? task.assignee.profilePictureUrl
+                    : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.assignee.profilePictureUrl}`}
+                  alt={task.assignee.username}
+                  width={30}
+                  height={30}
+                  className="h-8 w-8 rounded-full border-2 border-white object-cover dark:border-dark-secondary"
+                />
+              </motion.div>
             )}
             {task.author && (
-              <Image
-                key={task.author.userId}
-                src={task.author.profilePictureUrl && task.author.profilePictureUrl.startsWith("http")
-                  ? task.author.profilePictureUrl
-                  : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.author.profilePictureUrl}`}
-                alt={task.author.username}
-                width={30}
-                height={30}
-                className="h-8 w-8 rounded-full border-2 border-white object-cover dark:border-dark-secondary"
-              />
+              <motion.div whileHover={{ zIndex: 10, scale: 1.1 }}>
+                <Image
+                  key={task.author.userId}
+                  src={task.author.profilePictureUrl && task.author.profilePictureUrl.startsWith("http")
+                    ? task.author.profilePictureUrl
+                    : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${task.author.profilePictureUrl}`}
+                  alt={task.author.username}
+                  width={30}
+                  height={30}
+                  className="h-8 w-8 rounded-full border-2 border-white object-cover dark:border-dark-secondary"
+                />
+              </motion.div>
             )}
           </div>
-          <div 
-            className="flex items-center text-gray-500 dark:text-neutral-500 cursor-pointer hover:text-blue-500"
+          <motion.div 
+            whileHover={{ scale: 1.1 }}
+            className="flex items-center text-gray-500 dark:text-neutral-400 cursor-pointer hover:text-blue-500 transition-colors"
             onClick={() => handleOpenComments(task)}
           >
             <MessageSquareMore size={20} />
-            <span className="ml-1 text-sm dark:text-neutral-400">
+            <span className="ml-1 text-sm">
               {numberOfComments}
             </span>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
