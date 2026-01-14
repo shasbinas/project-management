@@ -31,53 +31,64 @@ const columns: GridColDef[] = [
     headerName: "Status",
     width: 130,
     renderCell: (params) => {
-      const getStatusColor = (status: string) => {
-        switch (status) {
-          case "To Do":
-            return "bg-gray-100 text-gray-800";
-          case "Work In Progress":
-            return "bg-blue-100 text-blue-800";
-          case "Under Review":
-            return "bg-orange-100 text-orange-800";
-          case "Completed":
-            return "bg-green-100 text-green-800";
-          default:
-            return "bg-gray-100 text-gray-800";
-        }
-      };
-
+      const status = params.value;
+      let colorClass = "";
+      switch (status) {
+        case "To Do":
+          colorClass = "bg-slate-100 text-slate-700 dark:bg-slate-800/80 dark:text-slate-300";
+          break;
+        case "Work In Progress":
+          colorClass = "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300";
+          break;
+        case "Under Review":
+          colorClass = "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300";
+          break;
+        case "Completed":
+          colorClass = "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300";
+          break;
+        default:
+          colorClass = "bg-gray-100 text-gray-700";
+      }
       return (
-        <span
-          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${getStatusColor(
-            params.value,
-          )}`}
-        >
-          {params.value}
-        </span>
+        <div className="flex items-center h-full">
+          <span className={`w-[110px] py-1 rounded-md text-[10px] font-bold uppercase tracking-tight border border-current/10 ${colorClass} text-center`}>
+            {status}
+          </span>
+        </div>
       );
     },
   },
   {
     field: "priority",
     headerName: "Priority",
-    width: 75,
-    renderCell: (params) => (
-      <span
-        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-          params.value === "Urgent"
-            ? "bg-red-200 text-red-700"
-            : params.value === "High"
-              ? "bg-orange-200 text-orange-700"
-              : params.value === "Medium"
-                ? "bg-yellow-200 text-yellow-700"
-                : params.value === "Low"
-                  ? "bg-blue-200 text-blue-700"
-                  : "bg-gray-200 text-gray-700"
-        }`}
-      >
-        {params.value}
-      </span>
-    ),
+    width: 100,
+    renderCell: (params) => {
+      const priority = params.value;
+      let bgColor = "";
+      switch (priority) {
+        case "Urgent":
+          bgColor = "bg-rose-100/50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400";
+          break;
+        case "High":
+          bgColor = "bg-orange-100/50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400";
+          break;
+        case "Medium":
+          bgColor = "bg-yellow-100/50 text-yellow-700 dark:bg-yellow-500/10 dark:text-yellow-400";
+          break;
+        case "Low":
+          bgColor = "bg-blue-100/50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400";
+          break;
+        default:
+          bgColor = "bg-gray-100/50 text-gray-700 dark:bg-gray-500/10 dark:text-gray-400";
+      }
+      return (
+        <div className="flex items-center h-full">
+          <span className={`w-[85px] py-1 rounded-md text-[10px] font-bold uppercase tracking-tight ${bgColor} text-center`}>
+            {priority}
+          </span>
+        </div>
+      );
+    },
   },
   {
     field: "tags",
