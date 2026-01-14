@@ -108,29 +108,43 @@ const Navbar = () => {
         
         <div className="hidden items-center gap-4 md:flex">
           <div className="flex items-center gap-3">
-            <motion.div 
-               whileHover={{ scale: 1.05 }}
-               className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-700 shadow-sm overflow-hidden bg-gray-200"
-            >
-              {currentUser?.profilePictureUrl ? (
-                <Image
-                  src={currentUser.profilePictureUrl.startsWith("http") 
-                    ? currentUser.profilePictureUrl 
-                    : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${currentUser.profilePictureUrl}`}
-                  alt={currentUser?.username}
-                  width={32}
-                  height={32}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center text-xs font-bold text-gray-500">
-                   {currentUser?.username?.charAt(0)}
-                </div>
-              )}
-            </motion.div>
-            <span className="text-xs font-bold dark:text-white text-gray-800 uppercase tracking-tight">
-              {currentUser?.username}
-            </span>
+            <div className="relative">
+              <motion.div 
+                 whileHover={{ scale: 1.05 }}
+                 className="h-9 w-9 rounded-full border-2 border-white dark:border-gray-700 shadow-sm overflow-hidden bg-gray-200"
+              >
+                {currentUser?.profilePictureUrl ? (
+                  <Image
+                    src={currentUser.profilePictureUrl.startsWith("http") 
+                      ? currentUser.profilePictureUrl 
+                      : `https://pmdevs3bucket.s3.ap-south-1.amazonaws.com/${currentUser.profilePictureUrl}`}
+                    alt={currentUser?.username}
+                    width={36}
+                    height={36}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-sm font-bold text-gray-500">
+                     {currentUser?.username?.charAt(0)}
+                  </div>
+                )}
+              </motion.div>
+              {/* Online Indicator */}
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0.5 }}
+                animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-dark-bg"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-bold dark:text-white text-gray-800 uppercase tracking-tight">
+                {currentUser?.username}
+              </span>
+              <span className="text-[10px] text-green-500 font-bold leading-none flex items-center gap-1">
+                ONLINE
+              </span>
+            </div>
           </div>
           
           <motion.button
