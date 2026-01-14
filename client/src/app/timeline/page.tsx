@@ -87,9 +87,9 @@ const Timeline = () => {
               columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
               listCellWidth="100px"
               barCornerRadius={4}
-              projectBackgroundColor={isDarkMode ? "#101214" : "#1f2937"}
-              projectProgressColor={isDarkMode ? "#1f2937" : "#aeb8c2"}
-              projectProgressSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
+              projectBackgroundColor={isDarkMode ? "#0275ff" : "#1f2937"}
+              projectProgressColor={isDarkMode ? "#0275ff" : "#aeb8c2"}
+              projectProgressSelectedColor={isDarkMode ? "#0275ff" : "#9ba1a6"}
               
               // Custom List Header
               TaskListHeader={({ headerHeight }) => (

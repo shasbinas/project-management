@@ -87,8 +87,10 @@ const Timeline = ({ id, setIsModalNewTaskOpen, searchQuery }: Props) => {
               {...displayOptions}
               columnWidth={displayOptions.viewMode === ViewMode.Month ? 150 : 100}
               listCellWidth="100px"
-              barBackgroundColor={isDarkMode ? "#101214" : "#aeb8c2"}
-              barBackgroundSelectedColor={isDarkMode ? "#000" : "#9ba1a6"}
+              barBackgroundColor={isDarkMode ? "#0275ff" : "#aeb8c2"}
+              barBackgroundSelectedColor={isDarkMode ? "#0275ff" : "#9ba1a6"}
+              barProgressColor={isDarkMode ? "#0275ff" : "#aeb8c2"}
+              barProgressSelectedColor={isDarkMode ? "#0275ff" : "#9ba1a6"}
             />
           ) : (
             <div className="p-5 text-center text-gray-500">
