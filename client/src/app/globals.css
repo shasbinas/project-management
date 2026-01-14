@@ -69,7 +69,60 @@ body,
   @apply dark:text-neutral-500;
 }
 
+/* Scrollbar Styling - Thin and elegant */
 ::-webkit-scrollbar {
-  width: 0px;
-  height: 0px;
+  width: 8px;
+  height: 8px;
 }
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* slate-300 */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* slate-400 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569; /* slate-600 */
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b; /* slate-500 */
+}
+
+/* TIMELINE OVERRIDES (gantt-task-react) */
+/* Container background */
+.timeline svg {
+   @apply bg-white dark:bg-dark-secondary;
+}
+
+/* Grid lines - thinner and lighter */
+.timeline .gridRow, 
+.timeline .gridRowLine { 
+  @apply stroke-gray-200 dark:stroke-gray-700;
+  stroke-width: 0.5;
+}
+
+/* Header background */
+.timeline .calendar-header {
+  @apply fill-gray-50 dark:fill-dark-tertiary;
+}
+
+/* Text colors */
+.timeline text {
+  @apply fill-gray-600 dark:fill-white;
+  font-family: 'Inter', sans-serif;
+  stroke: none;
+  font-weight: 500;
+}
+
+/* Today line */
+.timeline .today-line {
+  stroke: #3b82f6;
+  stroke-width: 2px;
+  stroke-dasharray: 4, 4;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.7));
+}
+
