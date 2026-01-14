@@ -106,9 +106,9 @@ const HomePage = () => {
     count: priorityCount[key],
   }));
 
-  const statusCount = projects.reduce(
-    (acc: Record<string, number>, project: Project) => {
-      const status = project.endDate ? "Completed" : "Active";
+  const statusCount = tasks.reduce(
+    (acc: Record<string, number>, task: Task) => {
+      const status = task.status || "To Do";
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     },
@@ -188,7 +188,16 @@ const HomePage = () => {
                 {projectStatus.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={
+                      (
+                        {
+                          "To Do": "#0088FE",
+                          "Work In Progress": "#FFBB28",
+                          "Under Review": "#FF8042",
+                          "Completed": "#00C49F",
+                        } as Record<string, string>
+                      )[entry.name] || COLORS[index % COLORS.length]
+                    }
                   />
                 ))}
               </Pie>
